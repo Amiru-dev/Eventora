@@ -1,0 +1,46 @@
+# ============================================================
+# Eventora .htaccess
+# Security and URL configuration for Apache
+# ============================================================
+
+# --- Prevent directory listing ---
+Options -Indexes
+
+# --- Deny access to sensitive files ---
+<FilesMatch "\.(sql|md|gitignore|example)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# --- Deny access to config directory ---
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block direct access to config files
+    RewriteRule ^config/ - [F,L]
+
+    # Block direct access to includes
+    RewriteRule ^includes/ - [F,L]
+
+    # Block direct access to setup files
+    RewriteRule ^setup/ - [F,L]
+
+    # Block direct access to cron scripts
+    RewriteRule ^cron/ - [F,L]
+
+    # Block direct access to templates
+    RewriteRule ^templates/ - [F,L]
+</IfModule>
+
+# --- Security Headers ---
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# --- PHP Settings ---
+<IfModule mod_php.c>
+    php_flag display_errors Off
+    php_flag log_errors On
+</IfModule>

@@ -1,0 +1,34 @@
+# === Credentials & Secrets ===
+config/payhere.php
+config/mail.php
+
+# === IDE & Editor ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# === OS Files ===
+desktop.ini
+ehthumbs.db
+
+# === Logs ===
+*.log
+error_log
+
+# === Composer (if used) ===
+/vendor/
+composer.lock
+
+# === Node (if used) ===
+node_modules/
+
+# === Uploads (user-generated) ===
+uploads/
+
+# === Temporary Files ===
+*.tmp
+*.bak

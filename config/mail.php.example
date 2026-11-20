@@ -1,0 +1,27 @@
+<?php
+/**
+ * Mail Configuration (PHPMailer + Gmail SMTP)
+ * 
+ * IMPORTANT: Copy this file to mail.php and fill in your Gmail credentials.
+ * Never commit mail.php with real credentials to version control.
+ * 
+ * To use Gmail SMTP:
+ * 1. Enable 2-Step Verification on your Google Account.
+ * 2. Generate an App Password: Google Account > Security > App Passwords.
+ * 3. Use the App Password below (not your regular Gmail password).
+ */
+
+// --- SMTP Settings ---
+define('MAIL_HOST', 'smtp.gmail.com');
+define('MAIL_PORT', 587);
+define('MAIL_ENCRYPTION', 'tls');
+define('MAIL_USERNAME', 'your-email@gmail.com');
+define('MAIL_PASSWORD', 'your-app-password');
+
+// --- Sender Details ---
+define('MAIL_FROM_ADDRESS', 'your-email@gmail.com');
+define('MAIL_FROM_NAME', 'Eventora - Campus Events');
+
+// --- Mail Settings ---
+define('MAIL_DEBUG', 0);         // 0 = off, 1 = client, 2 = client+server
+define('MAIL_CHARSET', 'UTF-8');

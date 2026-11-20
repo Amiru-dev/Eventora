@@ -1,0 +1,33 @@
+/* 
+ * Eventora Custom Styles
+ * Campus Event Booking System
+ * Built on top of Bootstrap 5
+ */
+
+/* ============================================================
+   CSS Variables / Theme
+   ============================================================ */
+:root {
+    --eventora-primary: #4f46e5;
+    --eventora-primary-dark: #4338ca;
+    --eventora-secondary: #f59e0b;
+    --eventora-success: #10b981;
+    --eventora-danger: #ef4444;
+    --eventora-dark: #1e293b;
+    --eventora-light: #f8fafc;
+    --eventora-gray: #64748b;
+    --eventora-border: #e2e8f0;
+}
+
+/* ============================================================
+   Base Styles
+   ============================================================ */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--eventora-light);
+    color: var(--eventora-dark);
+}
+
+/* ============================================================
+   Placeholder - More styles will be added in Level 1
+   ============================================================ */

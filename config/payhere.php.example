@@ -1,0 +1,22 @@
+<?php
+/**
+ * PayHere Sandbox Configuration
+ * 
+ * IMPORTANT: Copy this file to payhere.php and fill in your sandbox credentials.
+ * Never commit payhere.php with real credentials to version control.
+ * 
+ * Get sandbox credentials from: https://sandbox.payhere.lk/
+ */
+
+// --- PayHere Sandbox Credentials ---
+define('PAYHERE_MERCHANT_ID', 'YOUR_SANDBOX_MERCHANT_ID');
+define('PAYHERE_MERCHANT_SECRET', 'YOUR_SANDBOX_MERCHANT_SECRET');
+
+// --- PayHere Sandbox Endpoints ---
+define('PAYHERE_CHECKOUT_URL', 'https://sandbox.payhere.lk/pay/checkout');
+define('PAYHERE_ENVIRONMENT', 'sandbox');  // 'sandbox' for testing, never 'live'
+
+// --- Callback URLs ---
+define('PAYHERE_RETURN_URL', APP_URL . '/pages/payment/return.php');
+define('PAYHERE_CANCEL_URL', APP_URL . '/pages/payment/cancel.php');
+define('PAYHERE_NOTIFY_URL', APP_URL . '/pages/payment/notify.php');
