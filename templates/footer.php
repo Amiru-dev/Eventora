@@ -46,6 +46,10 @@ $baseUrl = defined('APP_URL') ? APP_URL : '';
     <script src="<?php echo $baseUrl; ?>/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AngularJS 1.8 JS (for client-side discovery) -->
     <script src="<?php echo $baseUrl; ?>/assets/vendor/angularjs/angular.min.js"></script>
+    <!-- AngularJS App & Controllers (FR-EVT-002) -->
+    <script src="<?php echo $baseUrl; ?>/assets/js/app.js"></script>
+    <script src="<?php echo $baseUrl; ?>/assets/js/services/EventService.js"></script>
+    <script src="<?php echo $baseUrl; ?>/assets/js/controllers/EventListCtrl.js"></script>
     <!-- Eventora Client-Side Validation & Business Rules Engine (FR-VAL-001) -->
     <script src="<?php echo $baseUrl; ?>/assets/js/validation.js"></script>
 </body>

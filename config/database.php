@@ -32,8 +32,8 @@ function getDBConnection(): PDO
         try {
             $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
         } catch (PDOException $e) {
-            // In production, log the error instead of displaying it
-            die("Database connection failed: " . $e->getMessage());
+            error_log("Database connection error: " . $e->getMessage());
+            throw $e;
         }
     }
 

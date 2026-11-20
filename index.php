@@ -1,233 +1,215 @@
 <?php
 /**
  * Eventora - Public Homepage & Event Catalog
- * FR-EVT-001, FR-EVT-003, FR-EVT-004, FR-EVT-005
- * Semantic HTML5, accessible markup, responsive grid (360px to desktop)
+ * 
+ * Implements:
+ * - FR-EVT-001: Shows approved, published and upcoming events ordered by start date
+ * - FR-EVT-002: AngularJS loads data from PHP JSON endpoint without page reload
+ * - FR-EVT-003: Search keyword, category and date filters combined using AND logic
+ * - FR-EVT-004: Sort by date and price
+ * - FR-EVT-005: Event cards show title, description, category, venue, schedule, price, capacity and availability
+ * - FR-EVT-010: Only published events visible
+ * - BR-05: Group discount highlight
+ * - NFR-LOC-001: LKR currency display and Asia/Colombo schedule
  */
+
 require_once __DIR__ . '/config/app.php';
+require_once __DIR__ . '/includes/helpers.php';
+require_once __DIR__ . '/includes/auth.php';
 
 $pageTitle = 'Explore Campus Events · ' . APP_NAME;
 $activePage = 'events';
 
-// Sample events data matching seed dataset for Level 1 static UI presentation
-$sampleEvents = [
-    [
-        'id' => 1,
-        'title' => 'Introduction to Web Development',
-        'category' => 'Workshop',
-        'venue' => 'Lab 201, IT Building',
-        'date' => '2026-11-27',
-        'time' => '10:00 AM - 01:00 PM',
-        'price' => 500.00,
-        'capacity' => 40,
-        'available' => 40,
-        'organizer' => 'NIIBS Tech Club',
-        'description' => 'Learn the basics of HTML, CSS and JavaScript in this hands-on workshop. Suitable for beginners with no prior coding experience.',
-        'icon' => 'bi-code-slash',
-        'is_free' => false
-    ],
-    [
-        'id' => 2,
-        'title' => 'AI and Machine Learning Seminar',
-        'category' => 'Seminar',
-        'venue' => 'Main Auditorium',
-        'date' => '2026-12-04',
-        'time' => '02:00 PM - 04:00 PM',
-        'price' => 0.00,
-        'capacity' => 200,
-        'available' => 200,
-        'organizer' => 'Computing Faculty',
-        'description' => 'An introductory seminar on artificial intelligence and machine learning concepts, featuring guest speakers from the industry.',
-        'icon' => 'bi-cpu',
-        'is_free' => true
-    ],
-    [
-        'id' => 3,
-        'title' => 'Inter-Faculty Cricket Tournament',
-        'category' => 'Sports',
-        'venue' => 'University Cricket Ground',
-        'date' => '2026-12-11',
-        'time' => '08:30 AM - 05:00 PM',
-        'price' => 300.00,
-        'capacity' => 100,
-        'available' => 100,
-        'organizer' => 'Sports Council',
-        'description' => 'Annual inter-faculty cricket tournament. Register your team and compete for the prestigious championship trophy.',
-        'icon' => 'bi-trophy',
-        'is_free' => false
-    ],
-    [
-        'id' => 4,
-        'title' => 'Cultural Night 2026',
-        'category' => 'Cultural',
-        'venue' => 'University Grounds',
-        'date' => '2026-12-20',
-        'time' => '06:00 PM - 11:00 PM',
-        'price' => 200.00,
-        'capacity' => 500,
-        'available' => 500,
-        'organizer' => 'Arts & Culture Club',
-        'description' => 'Celebrate diversity with musical performances, food stalls and traditional exhibitions from students across all faculties.',
-        'icon' => 'bi-music-note-beamed',
-        'is_free' => false
-    ],
-    [
-        'id' => 5,
-        'title' => 'Hackathon: Code for Change',
-        'category' => 'Tech',
-        'venue' => 'Innovation Hub',
-        'date' => '2026-11-30',
-        'time' => '09:00 AM - 09:00 AM (24h)',
-        'price' => 1000.00,
-        'capacity' => 60,
-        'available' => 60,
-        'organizer' => 'IEEE Student Branch',
-        'description' => 'A 24-hour hackathon where teams build software solutions for real-world campus problems. Cash prizes for top 3 teams.',
-        'icon' => 'bi-laptop',
-        'is_free' => false
-    ],
-    [
-        'id' => 6,
-        'title' => 'Campus Photography Workshop',
-        'category' => 'Workshop',
-        'venue' => 'Room 305, Arts Building',
-        'date' => '2026-11-25',
-        'time' => '01:00 PM - 05:00 PM',
-        'price' => 750.00,
-        'capacity' => 25,
-        'available' => 25,
-        'organizer' => 'Media Guild',
-        'description' => 'Master manual camera controls, lighting and street composition with professional mentor feedback.',
-        'icon' => 'bi-camera',
-        'is_free' => false
-    ]
-];
-
 include __DIR__ . '/templates/header.php';
 ?>
 
-<!-- Hero Banner Section -->
-<section class="hero-section" aria-labelledby="hero-title">
-    <div class="container text-center position-relative z-1">
-        <div class="hero-badge">
-            <i class="bi bi-stars" aria-hidden="true"></i> NIIBS Campus Events Hub
-        </div>
-        <h1 id="hero-title" class="display-4 fw-extrabold text-white mb-3">Discover, Book & Experience</h1>
-        <p class="lead text-light mb-4 mx-auto" style="max-width: 650px; opacity: 0.95;">
-            Join workshops, seminars, sports tournaments and cultural celebrations happening across campus. Instant booking with official QR electronic tickets.
-        </p>
+<!-- Wrap content in AngularJS Application & Controller -->
+<div ng-app="eventoraApp" ng-controller="EventListCtrl" class="pb-5">
 
-        <!-- Search & Filter Bar -->
-        <div class="card p-2 p-md-3 shadow-lg mx-auto text-start border-0" style="max-width: 820px; border-radius: 1rem;">
-            <form action="index.php" method="GET" class="row g-2 align-items-center">
-                <div class="col-md-5">
-                    <label for="search-input" class="visually-hidden">Search Events</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-transparent border-end-0 text-muted">
-                            <i class="bi bi-search" aria-hidden="true"></i>
-                        </span>
-                        <input type="text" id="search-input" name="q" class="form-control border-start-0 ps-0" placeholder="Search by title, topic or venue...">
+    <!-- Hero Banner Section -->
+    <section class="hero-section" aria-labelledby="hero-title">
+        <div class="container text-center position-relative z-1">
+            <div class="hero-badge">
+                <i class="bi bi-stars" aria-hidden="true"></i> NIIBS Campus Events Hub
+            </div>
+            <h1 id="hero-title" class="display-4 fw-extrabold text-white mb-3">Discover, Book & Experience</h1>
+            <p class="lead text-light mb-4 mx-auto" style="max-width: 650px; opacity: 0.95;">
+                Join workshops, seminars, sports tournaments and cultural celebrations happening across campus. Instant booking with official QR electronic tickets.
+            </p>
+
+            <!-- Search & Filter Controls (FR-EVT-003, FR-EVT-004) -->
+            <div class="card p-3 p-md-4 shadow-lg mx-auto text-start border-0" style="max-width: 880px; border-radius: 1rem;">
+                <div class="row g-2 align-items-center">
+                    <!-- Keyword Search (Title, Description, Venue, Organizer) -->
+                    <div class="col-md-5">
+                        <label for="search-input" class="visually-hidden">Search Events</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent border-end-0 text-muted">
+                                <i class="bi bi-search" aria-hidden="true"></i>
+                            </span>
+                            <input type="text"
+                                   id="search-input"
+                                   ng-model="searchQuery"
+                                   class="form-control border-start-0 ps-0"
+                                   placeholder="Search by topic, speaker or venue..."
+                                   aria-label="Search events">
+                            <button class="btn btn-outline-secondary border-start-0"
+                                    type="button"
+                                    ng-if="searchQuery"
+                                    ng-click="searchQuery = ''"
+                                    title="Clear search">
+                                <i class="bi bi-x-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Date Filter (FR-EVT-003) -->
+                    <div class="col-6 col-md-3">
+                        <label for="date-filter" class="visually-hidden">Filter by Date</label>
+                        <input type="date"
+                               id="date-filter"
+                               ng-model="selectedDate"
+                               class="form-control"
+                               title="Filter by event start date">
+                    </div>
+
+                    <!-- Sort Dropdown (FR-EVT-004) -->
+                    <div class="col-6 col-md-3">
+                        <label for="sort-select" class="visually-hidden">Sort Events</label>
+                        <select id="sort-select" ng-model="sortBy" class="form-select">
+                            <option value="date_asc">Date (Soonest)</option>
+                            <option value="date_desc">Date (Latest)</option>
+                            <option value="price_asc">Price (Lowest)</option>
+                            <option value="price_desc">Price (Highest)</option>
+                        </select>
+                    </div>
+
+                    <!-- Reset Filters Button -->
+                    <div class="col-12 col-md-1">
+                        <button type="button"
+                                class="btn btn-outline-secondary w-100 p-2"
+                                ng-click="resetFilters()"
+                                title="Reset all filters">
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                        </button>
                     </div>
                 </div>
-                <div class="col-6 col-md-3">
-                    <label for="category-select" class="visually-hidden">Category</label>
-                    <select id="category-select" name="category" class="form-select">
-                        <option value="">All Categories</option>
-                        <option value="Workshop">Workshop</option>
-                        <option value="Seminar">Seminar</option>
-                        <option value="Sports">Sports</option>
-                        <option value="Cultural">Cultural</option>
-                        <option value="Tech">Tech</option>
-                    </select>
-                </div>
-                <div class="col-6 col-md-2">
-                    <label for="sort-select" class="visually-hidden">Sort</label>
-                    <select id="sort-select" name="sort" class="form-select">
-                        <option value="date_asc">Date (Soonest)</option>
-                        <option value="price_asc">Price (Low to High)</option>
-                        <option value="price_desc">Price (High to Low)</option>
-                    </select>
-                </div>
-                <div class="col-12 col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="bi bi-funnel me-1" aria-hidden="true"></i> Filter
+
+                <!-- Category Chips (FR-EVT-003: AND combined) -->
+                <div class="d-flex flex-wrap align-items-center gap-2 mt-3 pt-2 border-top">
+                    <span class="small fw-bold text-muted me-1">Categories:</span>
+                    <button type="button"
+                            class="btn btn-sm"
+                            ng-class="selectedCategory === '' ? 'btn-primary' : 'btn-light border'"
+                            ng-click="setCategory('')">
+                        All
+                    </button>
+                    <button type="button"
+                            class="btn btn-sm"
+                            ng-repeat="cat in categories"
+                            ng-class="selectedCategory === cat ? 'btn-primary' : 'btn-light border'"
+                            ng-click="setCategory(cat)">
+                        {{ cat }}
                     </button>
                 </div>
-            </form>
-        </div>
-    </div>
-</section>
-
-<!-- Events Catalog Section -->
-<section class="py-5" aria-labelledby="catalog-heading">
-    <div class="container">
-        <!-- Section Header -->
-        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
-            <div>
-                <h2 id="catalog-heading" class="h3 fw-bold mb-1">Upcoming Campus Events</h2>
-                <p class="text-muted small mb-0">Browse approved and active university events open for student reservation.</p>
-            </div>
-            <div class="d-flex align-items-center gap-2 mt-3 mt-md-0">
-                <span class="badge bg-white border text-muted p-2">
-                    <i class="bi bi-check2-circle text-success me-1" aria-hidden="true"></i> Showing <?php echo count($sampleEvents); ?> events
-                </span>
             </div>
         </div>
+    </section>
 
-        <!-- Event Cards Grid (NFR-USA-001: 360px to Desktop responsive) -->
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            <?php foreach ($sampleEvents as $event): ?>
-                <div class="col">
-                    <article class="event-card" aria-labelledby="event-title-<?php echo $event['id']; ?>">
+    <!-- Events Catalog Section -->
+    <section class="py-5" aria-labelledby="catalog-heading">
+        <div class="container">
+            <!-- Section Header & Result Count -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 id="catalog-heading" class="h3 fw-bold mb-1">Upcoming Campus Events</h2>
+                    <p class="text-muted small mb-0">Browse approved university activities open for student seat reservation.</p>
+                </div>
+                <div class="d-flex align-items-center gap-2 mt-3 mt-md-0">
+                    <span class="badge bg-white border text-muted p-2 shadow-sm">
+                        <i class="bi bi-funnel text-primary me-1" aria-hidden="true"></i>
+                        Showing <strong>{{ (events | filter:customFilter).length }}</strong> of {{ events.length }} events
+                    </span>
+                    <button class="btn btn-sm btn-outline-secondary" ng-click="loadEvents()" title="Refresh events list">
+                        <i class="bi bi-arrow-clockwise" ng-class="{'spin': isLoading}"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading Spinner (FR-EVT-002) -->
+            <div ng-show="isLoading" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Loading events...</span>
+                </div>
+                <p class="text-muted mt-3">Loading campus event catalog...</p>
+            </div>
+
+            <!-- Error Banner -->
+            <div ng-show="errorMessage" class="alert alert-danger shadow-sm text-center py-4">
+                <i class="bi bi-exclamation-triangle-fill fs-3 text-danger d-block mb-2"></i>
+                <p class="mb-2 fw-semibold">{{ errorMessage }}</p>
+                <button class="btn btn-outline-danger btn-sm" ng-click="loadEvents()">Retry Loading</button>
+            </div>
+
+            <!-- Empty Search State -->
+            <div ng-show="!isLoading && !errorMessage && (events | filter:customFilter).length === 0" class="text-center py-5 bg-white rounded-3 border shadow-sm p-4">
+                <i class="bi bi-calendar-x display-3 text-muted mb-3 d-inline-block"></i>
+                <h3 class="h5 fw-bold text-dark">No Events Match Your Filters</h3>
+                <p class="text-muted small mb-3">Try adjusting your keyword query, category selection or date filter.</p>
+                <button class="btn btn-primary btn-sm" ng-click="resetFilters()">Clear Filters</button>
+            </div>
+
+            <!-- AngularJS Event Cards Grid (FR-EVT-001, FR-EVT-005, NFR-USA-001) -->
+            <div ng-show="!isLoading && !errorMessage" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                <div class="col" ng-repeat="event in filteredEvents = (events | filter:customFilter | orderBy:getSortPredicate()) track by event.event_id">
+                    <article class="event-card" aria-labelledby="event-title-{{ event.event_id }}">
                         <!-- Card Media -->
                         <div class="event-card-img-wrapper">
-                            <i class="bi <?php echo $event['icon']; ?>" aria-hidden="true"></i>
-                            <span class="event-card-badge badge-category badge-<?php echo strtolower($event['category']); ?>">
-                                <?php echo htmlspecialchars($event['category']); ?>
+                            <i class="bi {{ event.icon || 'bi-calendar-event' }}" aria-hidden="true"></i>
+                            <span class="event-card-badge badge-category badge-{{ event.category | lowercase }}">
+                                {{ event.category }}
                             </span>
                             <div class="event-price-tag">
-                                <?php if ($event['is_free']): ?>
-                                    <span class="text-success fw-bold">FREE</span>
-                                <?php else: ?>
-                                    LKR <?php echo number_format($event['price'], 2); ?>
-                                <?php endif; ?>
+                                <span ng-if="event.is_free" class="text-success fw-bold">FREE</span>
+                                <span ng-if="!event.is_free">{{ event.price_formatted }}</span>
                             </div>
                         </div>
 
                         <!-- Card Body -->
                         <div class="event-card-body">
-                            <h3 id="event-title-<?php echo $event['id']; ?>" class="event-card-title">
-                                <a href="pages/event_detail.php?id=<?php echo $event['id']; ?>" class="stretched-link text-decoration-none">
-                                    <?php echo htmlspecialchars($event['title']); ?>
+                            <h3 id="event-title-{{ event.event_id }}" class="event-card-title">
+                                <a ng-href="pages/event_detail.php?id={{ event.event_id }}" class="stretched-link text-decoration-none">
+                                    {{ event.title }}
                                 </a>
                             </h3>
 
                             <div class="event-card-meta">
                                 <div>
                                     <i class="bi bi-calendar3 text-primary" aria-hidden="true"></i>
-                                    <span><?php echo htmlspecialchars($event['date']); ?> · <?php echo htmlspecialchars($event['time']); ?></span>
+                                    <span>{{ event.start_formatted }}</span>
                                 </div>
                                 <div>
                                     <i class="bi bi-geo-alt text-danger" aria-hidden="true"></i>
-                                    <span><?php echo htmlspecialchars($event['venue']); ?></span>
+                                    <span>{{ event.venue }}</span>
                                 </div>
                                 <div>
                                     <i class="bi bi-building text-secondary" aria-hidden="true"></i>
-                                    <span>By <?php echo htmlspecialchars($event['organizer']); ?></span>
+                                    <span>By {{ event.organizer_name }}</span>
                                 </div>
                             </div>
 
                             <p class="card-text text-muted small flex-grow-1">
-                                <?php echo htmlspecialchars($event['description']); ?>
+                                {{ event.description }}
                             </p>
                         </div>
 
                         <!-- Card Footer -->
                         <div class="event-card-footer">
                             <div class="small">
-                                <span class="badge bg-light text-dark border">
-                                    <i class="bi bi-people-fill text-muted me-1" aria-hidden="true"></i>
-                                    <strong><?php echo $event['available']; ?></strong> / <?php echo $event['capacity']; ?> seats left
+                                <span class="badge" ng-class="event.is_sold_out ? 'badge-soldout' : 'bg-light text-dark border'">
+                                    <i class="bi" ng-class="event.is_sold_out ? 'bi-exclamation-circle' : 'bi-people-fill text-muted'" aria-hidden="true"></i>
+                                    <span ng-if="!event.is_sold_out"><strong>{{ event.seats_available }}</strong> / {{ event.capacity }} seats</span>
+                                    <span ng-if="event.is_sold_out">Sold Out (Waitlist Available)</span>
                                 </span>
                             </div>
                             <span class="btn btn-outline-primary btn-sm position-relative z-2">
@@ -236,31 +218,32 @@ include __DIR__ . '/templates/header.php';
                         </div>
                     </article>
                 </div>
-            <?php endforeach; ?>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Promotion Banner (BR-05 Bulk Discount Callout) -->
-<section class="py-4 bg-light border-top border-bottom">
-    <div class="container">
-        <div class="row align-items-center justify-content-between g-3">
-            <div class="col-lg-8">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="stat-card-icon stat-icon-warning flex-shrink-0" style="width: 48px; height: 48px;">
-                        <i class="bi bi-tag-fill fs-4" aria-hidden="true"></i>
-                    </div>
-                    <div>
-                        <h4 class="h5 fw-bold mb-1">Student Group Discount: 10% Off on 5+ Seats!</h4>
-                        <p class="text-muted small mb-0">Booking with your project team or batchmates? Bulk discount applies automatically on eligible ticket totals at checkout.</p>
+    <!-- Promotion Callout Banner (BR-05) -->
+    <section class="py-4 bg-light border-top border-bottom">
+        <div class="container">
+            <div class="row align-items-center justify-content-between g-3">
+                <div class="col-lg-8">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="stat-card-icon stat-icon-warning flex-shrink-0" style="width: 48px; height: 48px;">
+                            <i class="bi bi-tag-fill fs-4" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h4 class="h5 fw-bold mb-1">Student Group Discount: 10% Off on 5+ Seats!</h4>
+                            <p class="text-muted small mb-0">Booking with your project team or batchmates? Bulk discount applies automatically on eligible ticket totals at checkout (BR-05).</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-4 text-lg-end">
-                <span class="badge bg-primary p-2 fs-6">Use code: <strong>WELCOME10</strong></span>
+                <div class="col-lg-4 text-lg-end">
+                    <span class="badge bg-primary p-2 fs-6">Use code: <strong>WELCOME10</strong></span>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+
+</div>
 
 <?php include __DIR__ . '/templates/footer.php'; ?>
