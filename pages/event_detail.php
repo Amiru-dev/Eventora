@@ -172,7 +172,7 @@ include __DIR__ . '/../templates/header.php';
                     <small class="text-muted">Instant e-ticket upon successful confirmation</small>
                 </div>
                 <div class="card-body p-4">
-                    <form id="bookingForm" action="<?php echo APP_URL; ?>/pages/auth/login.php" method="GET" class="needs-validation">
+                    <form id="bookingForm" action="<?php echo APP_URL; ?>/pages/auth/login.php" method="GET" class="needs-validation" data-unit-price="<?php echo $event['price']; ?>">
                         <!-- Seat Quantity -->
                         <div class="mb-3">
                             <label for="seat-quantity" class="form-label d-flex justify-content-between">
