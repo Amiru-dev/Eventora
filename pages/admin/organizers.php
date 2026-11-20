@@ -4,6 +4,9 @@
  * FR-ORG-001, FR-ORG-002, FR-ORG-006, FR-ORG-007, UC-03
  */
 require_once __DIR__ . '/../../config/app.php';
+require_once __DIR__ . '/../../includes/auth.php';
+
+require_role('admin');
 
 $pageTitle = 'Organizer Approvals · ' . APP_NAME;
 $activePage = 'admin_organizers';

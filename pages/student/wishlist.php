@@ -4,6 +4,9 @@
  * FR-WISH-001, FR-WISH-002
  */
 require_once __DIR__ . '/../../config/app.php';
+require_once __DIR__ . '/../../includes/auth.php';
+
+require_role('student');
 
 $pageTitle = 'Saved Wishlist · ' . APP_NAME;
 $activePage = 'student_wishlist';

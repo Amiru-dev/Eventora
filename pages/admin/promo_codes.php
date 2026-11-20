@@ -4,6 +4,9 @@
  * FR-PROMO-001, FR-PROMO-002, BR-11, BR-12
  */
 require_once __DIR__ . '/../../config/app.php';
+require_once __DIR__ . '/../../includes/auth.php';
+
+require_role('admin');
 
 $pageTitle = 'Promo Codes & Discounts · ' . APP_NAME;
 $activePage = 'admin_promos';

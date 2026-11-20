@@ -4,6 +4,9 @@
  * FR-WAIT-001, FR-WAIT-002, FR-WAIT-003, BR-13 (FIFO order & 30-min offer expiry)
  */
 require_once __DIR__ . '/../../config/app.php';
+require_once __DIR__ . '/../../includes/auth.php';
+
+require_role('student');
 
 $pageTitle = 'Waitlist Queue · ' . APP_NAME;
 $activePage = 'student_waitlist';

@@ -2,8 +2,72 @@
 /**
  * Eventora - Organizer Registration Page
  * FR-AUTH-004: Organizer registration creates pending profile; admin approves
+ * FR-VAL-002, FR-VAL-003
  */
 require_once __DIR__ . '/../../config/app.php';
+require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/helpers.php';
+
+if (is_logged_in()) {
+    redirect(APP_URL . '/index.php');
+}
+
+$errors = [];
+$formData = [
+    'name'         => '',
+    'organization' => '',
+    'email'        => '',
+    'phone'        => '',
+    'bio'          => ''
+];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verify_csrf_token()) {
+        $errors[] = 'Security token expired. Please resubmit the form.';
+    } else {
+        $name            = $_POST['name'] ?? '';
+        $organization    = $_POST['organization'] ?? '';
+        $email           = $_POST['email'] ?? '';
+        $phone           = $_POST['phone'] ?? '';
+        $bio             = $_POST['bio'] ?? '';
+        $password        = $_POST['password'] ?? '';
+        $confirmPassword = $_POST['confirm_password'] ?? '';
+
+        $formData = [
+            'name'         => $name,
+            'organization' => $organization,
+            'email'        => $email,
+            'phone'        => $phone,
+            'bio'          => $bio
+        ];
+
+        if (mb_strlen(trim($name)) < 3) {
+            $errors[] = 'Representative contact name is required (min 3 characters).';
+        }
+        if (mb_strlen(trim($organization)) < 3) {
+            $errors[] = 'Club or Society name is required.';
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'Valid contact email is required.';
+        }
+        if (strlen($password) < 8) {
+            $errors[] = 'Password must be at least 8 characters.';
+        }
+        if ($password !== $confirmPassword) {
+            $errors[] = 'Password confirmation does not match.';
+        }
+
+        if (empty($errors)) {
+            $result = register_organizer($name, $email, $password, $organization, $phone, $bio);
+            if ($result['success']) {
+                set_flash_message('success', 'Your organizer application for "' . e($organization) . '" was submitted! An administrator will review and approve your account shortly.');
+                redirect(APP_URL . '/pages/auth/login.php');
+            } else {
+                $errors[] = $result['error'];
+            }
+        }
+    }
+}
 
 $pageTitle = 'Organizer Registration · ' . APP_NAME;
 $activePage = 'register_organizer';
@@ -29,18 +93,31 @@ include __DIR__ . '/../../templates/header.php';
                         </small>
                     </div>
 
+                    <?php if (!empty($errors)): ?>
+                        <div class="alert alert-danger shadow-sm mb-4">
+                            <ul class="mb-0 small ps-3">
+                                <?php foreach ($errors as $err): ?>
+                                    <li><?php echo e($err); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
+
                     <form id="organizerRegisterForm" action="register_organizer.php" method="POST" novalidate class="needs-validation">
+                        <!-- CSRF Field (FR-VAL-003) -->
+                        <?php echo csrf_field(); ?>
+
                         <!-- Representative Name -->
                         <div class="mb-3">
                             <label for="org_name" class="form-label">Contact Person Name</label>
-                            <input type="text" class="form-control" id="org_name" name="name" placeholder="John Doe" required minlength="3">
+                            <input type="text" class="form-control" id="org_name" name="name" placeholder="John Doe" value="<?php echo e($formData['name']); ?>" required minlength="3">
                             <div class="invalid-feedback">Representative name is required.</div>
                         </div>
 
                         <!-- Organization / Club Name -->
                         <div class="mb-3">
                             <label for="organization" class="form-label">Club / Student Society Name</label>
-                            <input type="text" class="form-control" id="organization" name="organization" placeholder="e.g. NIIBS Tech Club, Rotaract, Sports Council" required>
+                            <input type="text" class="form-control" id="organization" name="organization" placeholder="e.g. NIIBS Tech Club, Rotaract, Sports Council" value="<?php echo e($formData['organization']); ?>" required>
                             <div class="invalid-feedback">Please provide your society or faculty club name.</div>
                         </div>
 
@@ -48,12 +125,12 @@ include __DIR__ . '/../../templates/header.php';
                         <div class="row g-2 mb-3">
                             <div class="col-md-6">
                                 <label for="email" class="form-label">Official Email</label>
-                                <input type="email" class="form-control" id="email" name="email" placeholder="club@eventora.com" required>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="club@eventora.com" value="<?php echo e($formData['email']); ?>" required>
                                 <div class="invalid-feedback">Valid email required.</div>
                             </div>
                             <div class="col-md-6">
                                 <label for="phone" class="form-label">Contact Phone</label>
-                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="+94 77 123 4567" required>
+                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="+94 77 123 4567" value="<?php echo e($formData['phone']); ?>" required>
                                 <div class="invalid-feedback">Valid contact number required.</div>
                             </div>
                         </div>
@@ -61,7 +138,7 @@ include __DIR__ . '/../../templates/header.php';
                         <!-- Organization Bio / Purpose Statement -->
                         <div class="mb-3">
                             <label for="bio" class="form-label">Organization Description / Purpose</label>
-                            <textarea class="form-control" id="bio" name="bio" rows="3" placeholder="Briefly describe your club and the kinds of events you host on campus..." required></textarea>
+                            <textarea class="form-control" id="bio" name="bio" rows="3" placeholder="Briefly describe your club and the kinds of events you host on campus..." required><?php echo e($formData['bio']); ?></textarea>
                             <div class="invalid-feedback">Please provide a brief description.</div>
                         </div>
 

@@ -6,13 +6,10 @@
 if (!defined('APP_NAME')) {
     require_once __DIR__ . '/../config/app.php';
 }
+require_once __DIR__ . '/../includes/helpers.php';
+require_once __DIR__ . '/../includes/auth.php';
 
-// Session simulation/check for navigation presentation
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-$currentUser = $_SESSION['user'] ?? null;
+$currentUser = current_user();
 $currentRole = $currentUser['role'] ?? 'guest';
 $pageTitle = $pageTitle ?? APP_NAME . ' - Campus Event Booking System';
 $activePage = $activePage ?? '';
@@ -160,6 +157,9 @@ $baseUrl = defined('APP_URL') ? APP_URL : '';
             </div>
         </div>
     </nav>
+
+    <!-- Flash Notifications Container (Accessible) -->
+    <?php echo render_flash_messages(); ?>
 
     <!-- Main Content Container -->
     <main id="main-content">

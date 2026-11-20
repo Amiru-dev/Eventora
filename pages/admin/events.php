@@ -4,6 +4,9 @@
  * FR-EVT-007, FR-EVT-008, FR-EVT-010
  */
 require_once __DIR__ . '/../../config/app.php';
+require_once __DIR__ . '/../../includes/auth.php';
+
+require_role('admin');
 
 $pageTitle = 'Event Approvals · ' . APP_NAME;
 $activePage = 'admin_events';

@@ -5,6 +5,9 @@
  * Fast attendee validation via camera QR scanner simulator or manual token lookup
  */
 require_once __DIR__ . '/../../config/app.php';
+require_once __DIR__ . '/../../includes/auth.php';
+
+require_role(['organizer', 'admin']);
 
 $pageTitle = 'Venue Check-in Console · ' . APP_NAME;
 $activePage = 'org_checkin';

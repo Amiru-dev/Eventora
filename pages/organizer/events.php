@@ -4,6 +4,9 @@
  * FR-ORG-003, FR-ORG-005, FR-EVT-006
  */
 require_once __DIR__ . '/../../config/app.php';
+require_once __DIR__ . '/../../includes/auth.php';
+
+require_role('organizer');
 
 $pageTitle = 'My Events · ' . APP_NAME;
 $activePage = 'org_events';

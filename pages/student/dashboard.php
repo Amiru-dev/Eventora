@@ -4,6 +4,9 @@
  * Shows booking summary metrics, upcoming registered events, quick actions
  */
 require_once __DIR__ . '/../../config/app.php';
+require_once __DIR__ . '/../../includes/auth.php';
+
+require_role('student');
 
 $pageTitle = 'Student Portal · ' . APP_NAME;
 $activePage = 'student_dashboard';

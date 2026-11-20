@@ -4,6 +4,9 @@
  * FR-EVT-006, FR-EVT-009 (Capacity validation rule), UC-03
  */
 require_once __DIR__ . '/../../config/app.php';
+require_once __DIR__ . '/../../includes/auth.php';
+
+require_role('organizer');
 
 $eventId = isset($_GET['id']) ? (int)$_GET['id'] : null;
 $isEdit = $eventId !== null;

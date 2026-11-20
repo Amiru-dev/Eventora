@@ -4,6 +4,9 @@
  * FR-BKG-007, FR-BKG-008
  */
 require_once __DIR__ . '/../../config/app.php';
+require_once __DIR__ . '/../../includes/auth.php';
+
+require_role('student');
 
 $pageTitle = 'My Bookings · ' . APP_NAME;
 $activePage = 'student_bookings';
