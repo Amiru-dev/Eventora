@@ -7,9 +7,7 @@
 [![AngularJS](https://img.shields.io/badge/AngularJS-1.8-E23237.svg?logo=angularjs&logoColor=white)](https://angularjs.org/)
 [![PayHere](https://img.shields.io/badge/PayHere-Sandbox-008080.svg)](https://www.payhere.lk/)
 
-> **Academic Project** · Faculty of Computing and Information Technology | NIIBS  
-> **Prepared by:** A. U. Vidanapathirana (Registration No: `ITBSC/2025/EA/WD/003`)  
-> **Course Module:** Web Development & Enterprise Applications
+> **Prepared by:** A. U. Vidanapathirana
 
 ---
 
@@ -162,60 +160,110 @@ Level 15: Final Polish, Comprehensive Documentation (NFR-MNT-004) & Verification
 
 ## 6. Step-by-Step Installation & Setup
 
-### Step 1: Clone Repository
-Clone the repository into your web server's document root (for default XAMPP on Windows, use `C:\xampp\htdocs\Eventora`):
+### Step 1: Clone or Place Repository
+Place the repository in your preferred workspace directory (or inside your web server root such as `C:\xampp\htdocs\Eventora`):
 
 ```bash
-cd C:\xampp\htdocs
 git clone https://github.com/AUVidanapathirana/Eventora.git Eventora
 cd Eventora
 ```
 
-### Step 2: Database Setup & Migration
-1. Start **Apache** and **MySQL** services via the XAMPP Control Panel.
-2. Open your web browser and navigate to phpMyAdmin: [`http://localhost/phpmyadmin`](http://localhost/phpmyadmin).
-3. Create a new database named `eventora` with collation `utf8mb4_unicode_ci`.
-4. Import the schema and seed scripts in order:
-   - Import **`setup/schema.sql`** (creates 13 relational tables and indexes).
-   - Import **`setup/seed.sql`** (populates default administrator, sample organizer, sample student, and active events).
+---
 
-*Alternatively, using the MySQL CLI:*
+### Step 2: Database Setup & Migration
+
+Eventora requires a single MySQL database named `eventora`. Two SQL scripts in `setup/` configure the entire schema and seed data:
+1. `setup/schema.sql` — Creates database and 13 relational tables with foreign keys and indexes.
+2. `setup/seed.sql` — Inserts initial administrator, sample pre-approved organizer, test student, and published events.
+
+#### Option A: Using MySQL Workbench (Recommended)
+1. Open **MySQL Workbench** and connect to your local MySQL instance (e.g., `Local instance MySQL80` or `root`).
+2. Go to **File** → **Open SQL Script...** (or press `Ctrl + Shift + O`).
+3. Select `setup/schema.sql` and click **Open**.
+4. Click the **Execute (Lightning Bolt)** icon ⚡ (or press `Ctrl + Shift + Enter`) to create the `eventora` database and its tables.
+5. Next, open the seed data script: **File** → **Open SQL Script...** → Select `setup/seed.sql`.
+6. Click the **Execute (Lightning Bolt)** icon ⚡ to populate the demo accounts and events.
+7. In the left **Navigator / Schemas** panel, right-click and choose **Refresh All** to verify `eventora` and all 13 tables are present.
+
+#### Option B: Using phpMyAdmin (XAMPP)
+1. Start **Apache** and **MySQL** in the XAMPP Control Panel.
+2. Open your browser and navigate to [`http://localhost/phpmyadmin`](http://localhost/phpmyadmin).
+3. Click **Import** in the top menu bar.
+4. Choose `setup/schema.sql` and click **Go**.
+5. Repeat for `setup/seed.sql` and click **Go**.
+
+#### Option C: Using MySQL CLI
 ```bash
 mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS eventora CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 mysql -u root -p eventora < setup/schema.sql
 mysql -u root -p eventora < setup/seed.sql
 ```
 
+---
+
 ### Step 3: Configure Database Connection
-Open `config/database.php` and verify the database credentials:
+Open `config/database.php` and set your MySQL credentials (especially the password configured in your MySQL Workbench / MySQL Server):
 
 ```php
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'eventora');
 define('DB_USER', 'root');
-define('DB_PASS', '');       // Default XAMPP password is empty
-define('DB_PORT', 3306);
+define('DB_PASS', 'YOUR_MYSQL_PASSWORD'); // Set to your MySQL Workbench/Server root password (empty '' for default XAMPP)
+define('DB_CHARSET', 'utf8mb4');
 ```
 
-### Step 4: Configure Application URL
-Open `config/app.php` and verify the `APP_URL` matches your local server route:
+---
 
-```php
-define('APP_NAME', 'Eventora');
-define('APP_VERSION', '1.0');
-define('APP_URL', 'http://localhost/Eventora');
-define('APP_TIMEZONE', 'Asia/Colombo');
-define('APP_CURRENCY', 'LKR');
-```
+### Step 4: Choose Web Server & Running Method
 
-### Step 5: Configure PayHere Sandbox
-Open `config/payhere.php` to set or verify PayHere sandbox parameters:
+You can run Eventora using either the lightweight **PHP Built-in Web Server** or **XAMPP Apache**:
+
+#### Method A: PHP Built-in Server (Fastest — No File Moving Required)
+Ideal if your project is located in your personal documents folder (e.g., `C:\Users\ASUS\Documents\Eventora`).
+
+1. Open `config/app.php` and set `APP_URL`:
+   ```php
+   define('APP_URL', 'http://localhost:8000');
+   ```
+2. Open PowerShell or Command Prompt in the `Eventora` project folder and start the server:
+   ```powershell
+   # If PHP is in your system PATH:
+   php -S localhost:8000
+
+   # Or using the XAMPP PHP binary directly:
+   C:\xampp\php\php.exe -S localhost:8000
+   ```
+3. Open your browser and visit:
+   ```
+   http://localhost:8000
+   ```
+
+#### Method B: Running via XAMPP Apache
+Ideal for standard XAMPP deployment:
+
+1. Copy or move the `Eventora` folder into `C:\xampp\htdocs\Eventora`.
+2. Open `config/app.php` and verify `APP_URL`:
+   ```php
+   define('APP_URL', 'http://localhost/Eventora');
+   ```
+3. Open the **XAMPP Control Panel** and click **Start** on **Apache**.
+4. Open your browser and visit:
+   ```
+   http://localhost/Eventora
+   ```
+
+---
+
+### Step 5: Configure PayHere Sandbox (Optional)
+Open `config/payhere.php` to customize PayHere sandbox credentials if testing live mock transactions:
 
 ```php
 define('PAYHERE_MERCHANT_ID', '1234567');            // Your PayHere Sandbox Merchant ID
 define('PAYHERE_SECRET', 'YOUR_SANDBOX_SECRET');     // Your PayHere Sandbox Secret
 define('PAYHERE_SANDBOX', true);                     // Set to false for production
 ```
+
+---
 
 ### Step 6: Configure Mailer (PHPMailer + Gmail SMTP)
 Open `config/mail.php` to configure SMTP credentials:
@@ -225,10 +273,10 @@ define('MAIL_HOST', 'smtp.gmail.com');
 define('MAIL_PORT', 587);
 define('MAIL_USERNAME', 'your-club-email@gmail.com');
 define('MAIL_PASSWORD', 'your-gmail-app-password');  // 16-character Google App Password
-define('MAIL_SIMULATE', false);                      // Set to true to simulate without sending live SMTP
+define('MAIL_SIMULATE', true);                       // Set to true to simulate without sending live SMTP
 ```
 > [!NOTE]
-> When `MAIL_SIMULATE` is set to `true`, emails are safely logged to `email_logs` table without initiating external network sockets.
+> By default, `MAIL_SIMULATE` is set to `true`, which safely logs all outgoing emails (confirmations, offers, reminders) into the `email_logs` table without requiring third-party SMTP server access.
 
 ---
 

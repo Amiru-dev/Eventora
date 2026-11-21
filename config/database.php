@@ -9,7 +9,7 @@
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'eventora');
 define('DB_USER', 'root');
-define('DB_PASS', '');         // Default XAMPP has no password
+define('DB_PASS', 'Amiru20040131$');
 define('DB_CHARSET', 'utf8mb4');
 
 /**
