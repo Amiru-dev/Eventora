@@ -30,20 +30,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($eventId > 0) {
             if ($action === 'approve') {
                 if (admin_approve_event($eventId, $adminId)) {
-                    set_flash_message('success', "Event #{$eventId} approved and published to public catalog (FR-EVT-007, FR-EVT-008).");
+                    set_flash_message('success', "Event #{$eventId} approved and published to public catalog.");
                 } else {
                     set_flash_message('danger', "Could not approve Event #{$eventId}.");
                 }
             } elseif ($action === 'reject') {
                 $reason = trim($_POST['rejection_reason'] ?? 'Event does not meet campus criteria.');
                 if (admin_reject_event($eventId, $adminId, $reason)) {
-                    set_flash_message('warning', "Event #{$eventId} rejected and returned to organizer as draft (UC-03).");
+                    set_flash_message('warning', "Event #{$eventId} rejected and returned to organizer as draft.");
                 } else {
                     set_flash_message('danger', "Could not reject Event #{$eventId}.");
                 }
             } elseif ($action === 'suspend') {
                 if (admin_set_event_status($eventId, 'suspended', $adminId)) {
-                    set_flash_message('warning', "Event #{$eventId} suspended from public listings (FR-EVT-007).");
+                    set_flash_message('warning', "Event #{$eventId} suspended from public listings.");
                 }
             } elseif ($action === 'publish') {
                 if (admin_set_event_status($eventId, 'published', $adminId)) {
@@ -102,7 +102,7 @@ include __DIR__ . '/../../templates/header.php';
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
                 <div>
                     <h1 class="h3 fw-bold mb-1">Global Event Moderation</h1>
-                    <p class="text-muted small mb-0">Approve, reject, publish or suspend campus events across all student societies (FR-EVT-007).</p>
+                    <p class="text-muted small mb-0">Approve, reject, publish or suspend campus events across all student societies.</p>
                 </div>
 
                 <!-- Status Filter Pills -->
@@ -190,7 +190,7 @@ include __DIR__ . '/../../templates/header.php';
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <p class="small text-muted mb-2">Provide a reason for the organizer so they can revise and resubmit (FR-EVT-008, UC-03):</p>
+                                                                <p class="small text-muted mb-2">Provide a reason for the organizer so they can revise and resubmit:</p>
                                                                 <textarea class="form-control" name="rejection_reason" rows="3" placeholder="e.g. Please clarify prerequisites or adjust venue capacity..." required></textarea>
                                                             </div>
                                                             <div class="modal-footer">
@@ -208,7 +208,7 @@ include __DIR__ . '/../../templates/header.php';
                                                 <?php echo csrf_field(); ?>
                                                 <input type="hidden" name="action" value="suspend">
                                                 <input type="hidden" name="event_id" value="<?php echo (int)$ev['event_id']; ?>">
-                                                <button type="submit" class="btn btn-sm btn-outline-warning" title="Suspend from public catalog (FR-EVT-007)">
+                                                <button type="submit" class="btn btn-sm btn-outline-warning" title="Suspend from public catalog">
                                                     <i class="bi bi-pause"></i> Suspend
                                                 </button>
                                             </form>

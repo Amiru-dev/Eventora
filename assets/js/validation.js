@@ -490,7 +490,7 @@
                 if (isNaN(val) || val < 1) {
                     setInvalid(this, 'You must select at least 1 seat.');
                 } else if (val > maxPerStudent) {
-                    setInvalid(this, 'Maximum seat limit is ' + maxPerStudent + ' seats per student (BR-04).');
+                    setInvalid(this, 'Maximum seat limit is ' + maxPerStudent + ' seats per student.');
                 } else {
                     setValid(this);
                 }
@@ -648,7 +648,7 @@
             maxSeatInput.addEventListener('input', function () {
                 var val = parseInt(this.value, 10);
                 if (isNaN(val) || val < 1 || val > 10) {
-                    setInvalid(this, 'Max seats per student must be between 1 and 10 (BR-04).');
+                    setInvalid(this, 'Max seats per student must be between 1 and 10.');
                 } else {
                     setValid(this);
                 }

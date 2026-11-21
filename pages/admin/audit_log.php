@@ -65,7 +65,7 @@ include __DIR__ . '/../../templates/header.php';
                 </div>
                 <div class="d-flex gap-2 mt-2 mt-md-0">
                     <a href="<?php echo APP_URL; ?>/pages/reports/export.php?<?php echo e($exportQueryString); ?>" class="btn btn-outline-secondary btn-sm shadow-sm">
-                        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export Filtered CSV (FR-REP-005)
+                        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export Filtered CSV
                     </a>
                 </div>
             </div>
@@ -116,7 +116,7 @@ include __DIR__ . '/../../templates/header.php';
                         <h2 class="h5 fw-bold mb-0">Audit Trail Entries</h2>
                         <small class="text-muted">Showing page <?php echo $page; ?> of <?php echo $totalPages; ?> (<?php echo number_format($totalRecords); ?> total records)</small>
                     </div>
-                    <span class="badge bg-light text-muted border">Traceable to Actor & IP (NFR-AUD-001)</span>
+                    <span class="badge bg-light text-muted border">Traceable to Actor & IP</span>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-custom table-hover align-middle mb-0" aria-label="System Audit Trail">

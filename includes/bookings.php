@@ -196,7 +196,7 @@ function create_booking(int $userId, int $eventId, int $seats, ?string $promoCod
         }
 
         if ($event['status'] !== 'published') {
-            return ['success' => false, 'error' => 'This event is not currently accepting bookings (BR-06).'];
+            return ['success' => false, 'error' => 'This event is not currently accepting bookings.'];
         }
 
         $now = date('Y-m-d H:i:s');
@@ -222,7 +222,7 @@ function create_booking(int $userId, int $eventId, int $seats, ?string $promoCod
             $remaining = max(0, $maxAllowed - $existingSeats);
             return [
                 'success' => false,
-                'error'   => "Booking exceeds your per-student limit (BR-04). You already have {$existingSeats} active seats; you may book at most {$remaining} more."
+                'error'   => "Booking exceeds your per-student limit. You already have {$existingSeats} active seats; you may book at most {$remaining} more."
             ];
         }
 
@@ -255,7 +255,7 @@ function create_booking(int $userId, int $eventId, int $seats, ?string $promoCod
             $pdo->rollBack();
             return [
                 'success' => false,
-                'error'   => 'Sorry, there are not enough seats available to fulfill your request (BR-02).'
+                'error'   => 'Sorry, there are not enough seats available to fulfill your request.'
             ];
         }
 

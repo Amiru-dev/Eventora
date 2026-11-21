@@ -28,7 +28,7 @@ $errors  = [];
 // If editing, verify ownership and load existing event record
 if ($isEdit) {
     if (!can_manage_event($eventId)) {
-        set_flash_message('danger', 'Access denied: You can only edit events belonging to your society (FR-AUTH-007).');
+        set_flash_message('danger', 'Access denied: You can only edit events belonging to your society.');
         redirect(APP_URL . '/pages/organizer/events.php');
     }
     $event = get_event_by_id($eventId);
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($isEdit) {
             $result = update_event($eventId, $organizerProfileId, $postData, false);
             if ($result['success']) {
-                set_flash_message('success', 'Event "' . e($postData['title']) . '" was successfully updated and submitted for approval (FR-EVT-006).');
+                set_flash_message('success', 'Event "' . e($postData['title']) . '" was successfully updated and submitted for approval.');
                 redirect(APP_URL . '/pages/organizer/events.php');
             } else {
                 $errors[] = $result['error'];
@@ -135,7 +135,7 @@ include __DIR__ . '/../../templates/header.php';
                 <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center gap-2 mb-4">
                     <i class="bi bi-shield-exclamation fs-4 text-warning" aria-hidden="true"></i>
                     <small>
-                        <strong>Capacity Rule (FR-EVT-009):</strong> There are currently <strong><?php echo $committedSeats; ?> seats</strong> already booked by students for this event. You cannot set the new capacity lower than this number.
+                        <strong>Capacity Notice:</strong> There are currently <strong><?php echo $committedSeats; ?> seats</strong> already booked by students for this event. You cannot set the new capacity lower than this number.
                     </small>
                 </div>
             <?php endif; ?>
@@ -208,7 +208,7 @@ include __DIR__ . '/../../templates/header.php';
                             <div class="col-md-4">
                                 <label for="max_per_student" class="form-label">Max Seats Per Student</label>
                                 <input type="number" min="1" max="10" class="form-control" id="max_per_student" name="max_per_student" value="<?php echo e($formData['max_per_student']); ?>" required>
-                                <div class="form-text small">Default max 10 (BR-04).</div>
+                                <div class="form-text small">Default max 10.</div>
                             </div>
                         </div>
 
@@ -216,7 +216,7 @@ include __DIR__ . '/../../templates/header.php';
                         <div class="mb-3 form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="waitlist_enabled" name="waitlist_enabled" <?php echo !empty($formData['waitlist_enabled']) ? 'checked' : ''; ?>>
                             <label class="form-check-label fw-semibold" for="waitlist_enabled">
-                                Enable FIFO Waitlist when event is sold out (BR-03, BR-13)
+                                Enable FIFO Waitlist when event is sold out
                             </label>
                         </div>
 

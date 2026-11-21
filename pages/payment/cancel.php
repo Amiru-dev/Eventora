@@ -41,7 +41,7 @@ include __DIR__ . '/../../templates/header.php';
                 </div>
                 <h1 class="h3 fw-bold text-dark mb-2">Checkout Cancelled</h1>
                 <p class="text-muted small mb-4">
-                    Your payment at PayHere sandbox was cancelled. Any seats temporarily reserved for this attempt have been safely released back to room availability (FR-PAY-008). No funds were transferred.
+                    Your payment at PayHere sandbox was cancelled. Any seats temporarily reserved for this attempt have been safely released back to room availability. No funds were transferred.
                 </p>
 
                 <div class="d-grid gap-2">

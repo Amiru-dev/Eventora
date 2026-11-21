@@ -47,7 +47,7 @@
             </div>
             <div class="row">
                 <span class="label">Offer Expiration Window:</span>
-                <span class="value" style="color: #c62828;">30 Minutes (BR-13)</span>
+                <span class="value" style="color: #c62828;">30 Minutes</span>
             </div>
             <div class="row">
                 <span class="label">Expires At:</span>

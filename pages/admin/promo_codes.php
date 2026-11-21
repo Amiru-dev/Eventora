@@ -68,7 +68,7 @@ include __DIR__ . '/../../templates/header.php';
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
                 <div>
                     <h1 class="h3 fw-bold mb-1">Promo Codes & Discounts</h1>
-                    <p class="text-muted small mb-0">Configure discount vouchers, usage limits, minimum spend and expiration dates (FR-PROMO-001).</p>
+                    <p class="text-muted small mb-0">Configure discount vouchers, usage limits, minimum spend and expiration dates.</p>
                 </div>
                 <div>
                     <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#newPromoModal">
@@ -81,7 +81,7 @@ include __DIR__ . '/../../templates/header.php';
             <div class="alert alert-light border shadow-sm p-3 mb-4 d-flex align-items-center gap-2">
                 <i class="bi bi-info-circle-fill text-primary fs-5" aria-hidden="true"></i>
                 <small class="text-secondary">
-                    <strong>Business Rule BR-12 active:</strong> Discount stacking is disabled. The system automatically evaluates both bulk discount (10% for 5+ seats) and promo code discounts, and applies the single highest discount to the reservation.
+                    <strong>Discount Policy:</strong> Discount stacking is disabled. The system automatically evaluates both bulk discount (10% for 5+ seats) and promo code discounts, and applies the single highest discount to the reservation.
                 </small>
             </div>
 

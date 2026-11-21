@@ -151,7 +151,7 @@ include __DIR__ . '/../../templates/header.php';
                         </div>
                     <?php else: ?>
                         <div class="p-2 bg-light rounded small text-muted border">
-                            <i class="bi bi-info-circle me-1 text-primary"></i> <strong>Check-in Notice:</strong> Present this QR code or token at the venue entrance. One-time entry only (BR-16).
+                            <i class="bi bi-info-circle me-1 text-primary"></i> <strong>Check-in Notice:</strong> Present this QR code or token at the venue entrance. One-time entry only.
                         </div>
                     <?php endif; ?>
                 </div>
@@ -166,7 +166,7 @@ include __DIR__ . '/../../templates/header.php';
                                  class="d-block mx-auto img-fluid"
                                  style="width: 160px; height: 160px;" />
                         </div>
-                        <small class="text-muted d-block mb-1">Cryptographic Token (NFR-SEC-007)</small>
+                        <small class="text-muted d-block mb-1">Cryptographic Token</small>
                         <span class="ticket-token-code"><?php echo e($ticket['token']); ?></span>
                         <div class="small text-muted mt-2">Ref: <?php echo e($ticket['booking_ref']); ?></div>
                     </div>

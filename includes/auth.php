@@ -334,7 +334,7 @@ function login_user(string $email, string $password): array
                 ]);
                 return [
                     'success' => false,
-                    'error'   => 'Your organizer privileges have been suspended (FR-ORG-006).'
+                    'error'   => 'Your organizer privileges have been suspended.'
                 ];
             }
         }

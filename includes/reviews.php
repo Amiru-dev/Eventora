@@ -53,7 +53,7 @@ function can_user_review_event(int $userId, int $eventId): array
             return [
                 'can_review'      => false,
                 'reason'          => 'already_reviewed',
-                'message'         => 'You have already submitted a review for this event (BR-17).',
+                'message'         => 'You have already submitted a review for this event.',
                 'existing_review' => $existing
             ];
         }
@@ -169,7 +169,7 @@ function submit_event_review(int $userId, int $eventId, int $rating, ?string $co
     } catch (\PDOException $e) {
         // Duplicate key constraint check (uk_review_user_event)
         if ($e->getCode() == 23000) {
-            return ['success' => false, 'review_id' => null, 'error' => 'You have already reviewed this event (BR-17).'];
+            return ['success' => false, 'review_id' => null, 'error' => 'You have already reviewed this event.'];
         }
         error_log('submit_event_review error: ' . $e->getMessage());
         return ['success' => false, 'review_id' => null, 'error' => 'Database error while saving your review.'];

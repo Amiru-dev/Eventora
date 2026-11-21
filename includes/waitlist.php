@@ -163,7 +163,7 @@ function accept_waitlist_offer(int $userId, int $entryId): array
         if (!empty($entry['offer_expires_at']) && strtotime($entry['offer_expires_at']) < time()) {
             // Auto-expire
             $pdo->prepare("UPDATE waitlist SET status = 'expired' WHERE entry_id = :id")->execute([':id' => $entryId]);
-            return ['success' => false, 'event_id' => null, 'seats' => 0, 'error' => 'Your offer has expired (BR-13). Please re-join the waitlist.'];
+            return ['success' => false, 'event_id' => null, 'seats' => 0, 'error' => 'Your offer has expired. Please re-join the waitlist.'];
         }
 
         // Mark accepted

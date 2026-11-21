@@ -49,7 +49,7 @@ include __DIR__ . '/../../templates/header.php';
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
                 <div>
                     <h1 class="h3 fw-bold mb-1">Saved Events (Wishlist)</h1>
-                    <p class="text-muted small mb-0">Events you have bookmarked to track availability and booking deadlines (FR-WISH-001).</p>
+                    <p class="text-muted small mb-0">Events you have bookmarked to track availability and booking deadlines.</p>
                 </div>
                 <a href="<?php echo APP_URL; ?>/index.php" class="btn btn-primary btn-sm">
                     <i class="bi bi-compass me-1"></i> Discover More Events

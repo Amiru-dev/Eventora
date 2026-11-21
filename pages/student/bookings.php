@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'cancel' && $bookingId > 0) {
             $cancelResult = cancel_booking($bookingId, $userId);
             if ($cancelResult['success']) {
-                set_flash_message('success', 'Your booking reservation was successfully cancelled. Seats have been released back to event capacity (FR-BKG-008).');
+                set_flash_message('success', 'Your booking reservation was successfully cancelled. Seats have been released back to event capacity.');
             } else {
                 set_flash_message('danger', $cancelResult['error']);
             }
@@ -93,7 +93,7 @@ include __DIR__ . '/../../templates/header.php';
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
                 <div>
                     <h1 class="h3 fw-bold mb-1">My Bookings & Reservations</h1>
-                    <p class="text-muted small mb-0">View all your registered event seats, download tickets, or cancel eligible bookings (FR-BKG-007).</p>
+                    <p class="text-muted small mb-0">View all your registered event seats, download tickets, or cancel eligible bookings.</p>
                 </div>
                 <div>
                     <a href="<?php echo APP_URL; ?>/index.php" class="btn btn-primary btn-sm">
@@ -189,7 +189,7 @@ include __DIR__ . '/../../templates/header.php';
                                                                 <div class="modal-body">
                                                                     <p>Are you sure you want to cancel your reservation for <strong><?php echo e($b['event_title']); ?></strong>?</p>
                                                                     <p class="small text-muted mb-0">
-                                                                        Your <?php echo (int)$b['seats']; ?> seat(s) will be immediately released back to other students or waitlisted applicants (FR-BKG-008).
+                                                                        Your <?php echo (int)$b['seats']; ?> seat(s) will be immediately released back to other students or waitlisted applicants.
                                                                     </p>
                                                                 </div>
                                                                 <div class="modal-footer">

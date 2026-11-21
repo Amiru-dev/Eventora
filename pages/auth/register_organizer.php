@@ -89,7 +89,7 @@ include __DIR__ . '/../../templates/header.php';
                     <div class="alert alert-info border-0 shadow-sm d-flex align-items-center gap-2 mb-4">
                         <i class="bi bi-info-circle-fill fs-5" aria-hidden="true"></i>
                         <small>
-                            <strong>Approval Notice:</strong> In accordance with university policy (FR-AUTH-004), your account will be created with <em>pending</em> status until verified by a campus administrator.
+                            <strong>Approval Notice:</strong> In accordance with university policy, your account will be created with <em>pending</em> status until verified by a campus administrator.
                         </small>
                     </div>
 

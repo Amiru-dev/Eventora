@@ -73,7 +73,7 @@ function create_event(int $organizerProfileId, array $data): array
     }
     if ($maxPerStudent < 1 || $maxPerStudent > MAX_SEATS_PER_STUDENT) {
         $maxLimit = MAX_SEATS_PER_STUDENT;
-        return ['success' => false, 'error' => "Max seats per student must be between 1 and {$maxLimit} (BR-04)."];
+        return ['success' => false, 'error' => "Max seats per student must be between 1 and {$maxLimit}."];
     }
     if (mb_strlen($description) < 20) {
         return ['success' => false, 'error' => 'Event description must be at least 20 characters long.'];
@@ -88,7 +88,7 @@ function create_event(int $organizerProfileId, array $data): array
         $org = $orgCheck->fetch();
 
         if (!$org || $org['approval_status'] !== 'approved') {
-            return ['success' => false, 'error' => 'Organizer profile is not approved to submit events (FR-AUTH-004).'];
+            return ['success' => false, 'error' => 'Organizer profile is not approved to submit events.'];
         }
 
         // Initially submitted with 'pending_approval' status (UC-03 Step 2)
@@ -154,7 +154,7 @@ function update_event(int $eventId, int $organizerProfileId, array $data, bool $
 
         // Ownership enforcement (FR-AUTH-007, BR-15)
         if (!$isAdmin && (int)$current['organizer_id'] !== $organizerProfileId) {
-            return ['success' => false, 'error' => 'Access denied: You can only edit your own events (FR-AUTH-007).'];
+            return ['success' => false, 'error' => 'Access denied: You can only edit your own events.'];
         }
 
         $newCapacity = isset($data['capacity']) ? (int)$data['capacity'] : (int)$current['capacity'];
@@ -165,7 +165,7 @@ function update_event(int $eventId, int $organizerProfileId, array $data, bool $
         if ($newCapacity < $committedSeats) {
             return [
                 'success' => false,
-                'error'   => "Cannot reduce capacity to {$newCapacity}. There are already {$committedSeats} seats committed or reserved by students (FR-EVT-009)."
+                'error'   => "Cannot reduce capacity to {$newCapacity}. There are already {$committedSeats} seats committed or reserved by students."
             ];
         }
 

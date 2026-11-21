@@ -39,7 +39,7 @@ include __DIR__ . '/../../templates/header.php';
                 </div>
                 <div class="d-flex gap-2 mt-2 mt-md-0">
                     <a href="<?php echo APP_URL; ?>/pages/reports/export.php?type=org_bookings" class="btn btn-outline-secondary btn-sm shadow-sm">
-                        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export Bookings CSV (FR-REP-005)
+                        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export Bookings CSV
                     </a>
                     <a href="<?php echo APP_URL; ?>/pages/organizer/event_form.php" class="btn btn-primary btn-sm">
                         <i class="bi bi-plus-lg me-1"></i> Submit New Event
@@ -178,7 +178,7 @@ include __DIR__ . '/../../templates/header.php';
                                                 <a href="checkin.php?event=<?php echo $evt['event_id']; ?>" class="btn btn-outline-primary" title="Check-in Scanner">
                                                     <i class="bi bi-qr-code-scan"></i>
                                                 </a>
-                                                <a href="<?php echo APP_URL; ?>/pages/reports/export.php?type=attendees&event_id=<?php echo $evt['event_id']; ?>" class="btn btn-outline-success" title="Download Attendee Roster CSV (FR-REP-005)">
+                                                <a href="<?php echo APP_URL; ?>/pages/reports/export.php?type=attendees&event_id=<?php echo $evt['event_id']; ?>" class="btn btn-outline-success" title="Download Attendee Roster CSV">
                                                     <i class="bi bi-file-earmark-arrow-down"></i>
                                                 </a>
                                             </div>

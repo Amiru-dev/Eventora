@@ -83,7 +83,7 @@ include __DIR__ . '/../../templates/header.php';
                         <i class="bi bi-clock-history display-4 text-dark mb-2 d-inline-block"></i>
                         <h1 class="h3 fw-bold text-dark mb-1">Seats Held — Pending Payment</h1>
                         <p class="text-dark small mb-0">
-                            Your seats are temporarily held for <strong>10 minutes</strong> (BR-08). Complete sandbox checkout to finalize.
+                            Your seats are temporarily held for <strong>10 minutes</strong>. Complete sandbox checkout to finalize.
                         </p>
                     <?php else: ?>
                         <i class="bi bi-x-circle display-4 text-white mb-2 d-inline-block"></i>
@@ -132,7 +132,7 @@ include __DIR__ . '/../../templates/header.php';
                                     <tr>
                                         <td class="text-success">
                                             <i class="bi bi-tag-fill me-1"></i>
-                                            Discount Applied (<?php echo ucfirst(e($booking['discount_type'])); ?> Rule, BR-12):
+                                            Discount Applied (<?php echo ucfirst(e($booking['discount_type'])); ?>):
                                         </td>
                                         <td class="text-end text-success fw-bold">
                                             - <?php echo format_currency($booking['discount_amount']); ?>
@@ -160,7 +160,7 @@ include __DIR__ . '/../../templates/header.php';
                     <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center pt-3 border-top">
                         <?php if ($isConfirmed): ?>
                             <a href="<?php echo APP_URL; ?>/pages/student/ticket.php?ref=<?php echo urlencode($booking['booking_ref']); ?>" class="btn btn-primary btn-lg">
-                                <i class="bi bi-qr-code me-2"></i> View & Print QR E-Ticket (FR-TKT-002)
+                                <i class="bi bi-qr-code me-2"></i> View & Print QR E-Ticket
                             </a>
                         <?php elseif ($isPending): ?>
                             <a href="<?php echo APP_URL; ?>/pages/payment/checkout.php?ref=<?php echo urlencode($booking['booking_ref']); ?>" class="btn btn-warning btn-lg fw-bold">

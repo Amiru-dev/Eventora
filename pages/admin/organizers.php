@@ -31,20 +31,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($profileId > 0) {
             if ($action === 'approve') {
                 if (admin_approve_organizer($profileId, $adminId)) {
-                    set_flash_message('success', "Organizer profile #{$profileId} approved! The society representative now has event creation access (FR-AUTH-004).");
+                    set_flash_message('success', "Organizer profile #{$profileId} approved! The society representative now has event creation access.");
                 } else {
                     set_flash_message('danger', "Could not approve organizer profile #{$profileId}.");
                 }
             } elseif ($action === 'reject') {
                 $reason = trim($_POST['rejection_reason'] ?? 'Application does not meet campus society criteria.');
                 if (admin_reject_organizer($profileId, $adminId, $reason)) {
-                    set_flash_message('warning', "Organizer application #{$profileId} rejected with recorded reason (FR-ORG-002).");
+                    set_flash_message('warning', "Organizer application #{$profileId} rejected with recorded reason.");
                 } else {
                     set_flash_message('danger', "Could not reject organizer #{$profileId}.");
                 }
             } elseif ($action === 'suspend') {
                 if (admin_suspend_organizer($profileId)) {
-                    set_flash_message('warning', "Organizer #{$profileId} suspended. Event management privileges have been revoked (FR-ORG-006).");
+                    set_flash_message('warning', "Organizer #{$profileId} suspended. Event management privileges have been revoked.");
                 }
             }
         }
@@ -98,7 +98,7 @@ include __DIR__ . '/../../templates/header.php';
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
                 <div>
                     <h1 class="h3 fw-bold mb-1">Club & Society Organizers</h1>
-                    <p class="text-muted small mb-0">Review organizer access requests and manage existing society permissions (FR-AUTH-004, FR-ORG-002).</p>
+                    <p class="text-muted small mb-0">Review organizer access requests and manage existing society permissions.</p>
                 </div>
 
                 <div class="btn-group btn-group-sm mt-2 mt-md-0">
@@ -182,7 +182,7 @@ include __DIR__ . '/../../templates/header.php';
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <p class="small text-muted mb-2">Provide a reason for rejecting this organization profile (FR-ORG-002):</p>
+                                                                <p class="small text-muted mb-2">Provide a reason for rejecting this organization profile:</p>
                                                                 <textarea class="form-control" name="rejection_reason" rows="3" placeholder="e.g. Society registration documents pending verification..." required></textarea>
                                                             </div>
                                                             <div class="modal-footer">
@@ -200,7 +200,7 @@ include __DIR__ . '/../../templates/header.php';
                                                 <?php echo csrf_field(); ?>
                                                 <input type="hidden" name="action" value="suspend">
                                                 <input type="hidden" name="profile_id" value="<?php echo (int)$org['profile_id']; ?>">
-                                                <button type="submit" class="btn btn-sm btn-outline-warning" title="Suspend Organizer Privileges (FR-ORG-006)">
+                                                <button type="submit" class="btn btn-sm btn-outline-warning" title="Suspend Organizer Privileges">
                                                     <i class="bi bi-pause-circle me-1"></i> Suspend
                                                 </button>
                                             </form>

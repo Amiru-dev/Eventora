@@ -43,7 +43,7 @@ include __DIR__ . '/../../templates/header.php';
                 </div>
                 <div class="d-flex gap-2 mt-2 mt-md-0">
                     <a href="<?php echo APP_URL; ?>/pages/reports/export.php?type=system_bookings" class="btn btn-outline-secondary btn-sm shadow-sm">
-                        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export System CSV (FR-REP-005)
+                        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export System CSV
                     </a>
                 </div>
             </div>

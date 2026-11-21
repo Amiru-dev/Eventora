@@ -119,9 +119,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($bookResult['success']) {
                     $bData = $bookResult['booking'];
                     if ($bData['is_free']) {
-                        set_flash_message('success', 'Your reservation is confirmed! Free admission ticket generated successfully (FR-BKG-006).');
+                        set_flash_message('success', 'Your reservation is confirmed! Free admission ticket generated successfully.');
                     } else {
-                        set_flash_message('info', 'Seats held for 10 minutes (BR-08). Proceed to PayHere sandbox payment to confirm your booking.');
+                        set_flash_message('info', 'Seats held for 10 minutes. Proceed to PayHere sandbox payment to confirm your booking.');
                     }
                     redirect(APP_URL . '/pages/student/booking_detail.php?ref=' . urlencode($bData['booking_ref']));
                 } else {
@@ -399,7 +399,7 @@ include __DIR__ . '/../templates/header.php';
                             <span class="badge bg-danger fs-6 px-3 py-2 mb-3">SOLD OUT</span>
                             <h3 class="h5 fw-bold text-dark mb-2">All Seats Have Been Reserved</h3>
                             <p class="small text-muted mb-4">
-                                This event has reached full capacity. You can join the FIFO waitlist to receive priority booking when seats are released (BR-03, BR-13).
+                                This event has reached full capacity. You can join the FIFO waitlist to receive priority booking when seats are released.
                             </p>
                             <a href="<?php echo APP_URL; ?>/pages/student/waitlist.php?join=<?php echo $eventId; ?>" class="btn btn-warning w-100 fw-bold">
                                 <i class="bi bi-hourglass-split me-1"></i> Join Waitlist Queue (FIFO)
@@ -427,7 +427,7 @@ include __DIR__ . '/../templates/header.php';
                                     <input type="text" id="promo-input" name="promo" class="form-control text-uppercase" placeholder="e.g. WELCOME10">
                                     <button type="button" class="btn btn-outline-secondary">Apply</button>
                                 </div>
-                                <small class="text-muted">Discounts don't stack; best rate applies automatically (BR-12).</small>
+                                <small class="text-muted">Discounts don't stack; best rate applies automatically.</small>
                             </div>
 
                             <!-- Price Breakdown Summary (FR-BKG-002, BR-05, BR-09) -->

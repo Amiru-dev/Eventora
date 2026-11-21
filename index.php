@@ -233,7 +233,7 @@ include __DIR__ . '/templates/header.php';
                         </div>
                         <div>
                             <h4 class="h5 fw-bold mb-1">Student Group Discount: 10% Off on 5+ Seats!</h4>
-                            <p class="text-muted small mb-0">Booking with your project team or batchmates? Bulk discount applies automatically on eligible ticket totals at checkout (BR-05).</p>
+                            <p class="text-muted small mb-0">Booking with your project team or batchmates? Bulk discount applies automatically on eligible ticket totals at checkout.</p>
                         </div>
                     </div>
                 </div>

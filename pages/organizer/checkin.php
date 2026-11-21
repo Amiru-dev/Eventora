@@ -77,7 +77,7 @@ include __DIR__ . '/../../templates/header.php';
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
                 <div>
                     <h1 class="h3 fw-bold mb-1">Venue Ticket Check-in</h1>
-                    <p class="text-muted small mb-0">Scan attendee QR codes or enter opaque ticket tokens to authenticate entry (BR-16).</p>
+                    <p class="text-muted small mb-0">Scan attendee QR codes or enter opaque ticket tokens to authenticate entry.</p>
                 </div>
                 <div class="d-flex align-items-center gap-2">
                     <label for="eventSelector" class="small fw-bold text-muted mb-0">Active Event:</label>
@@ -370,7 +370,7 @@ document.addEventListener('DOMContentLoaded', function() {
             resultIcon.className = 'bi bi-exclamation-triangle fs-4';
             resultHeading.className = 'd-block fw-bold text-warning';
             resultHeading.textContent = 'ALREADY CHECKED IN';
-            resultSub.innerHTML = `<strong>Entry Denied (BR-16)</strong><br><span class="text-dark">${escapeHtml(msg)}</span>`;
+            resultSub.innerHTML = `<strong>Entry Denied</strong><br><span class="text-dark">${escapeHtml(msg)}</span>`;
             tokenInput.select();
 
         } else if (result === 'WRONG_EVENT') {

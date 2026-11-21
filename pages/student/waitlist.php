@@ -67,7 +67,7 @@ include __DIR__ . '/../../templates/header.php';
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
                 <div>
                     <h1 class="h3 fw-bold mb-1">Waitlist Queue Positions</h1>
-                    <p class="text-muted small mb-0">Track your FIFO queue positions for sold-out campus events (FR-WAIT-001, BR-13).</p>
+                    <p class="text-muted small mb-0">Track your FIFO queue positions for sold-out campus events.</p>
                 </div>
                 <a href="<?php echo APP_URL; ?>/index.php" class="btn btn-primary btn-sm">
                     <i class="bi bi-compass me-1"></i> Discover Events
@@ -183,7 +183,7 @@ include __DIR__ . '/../../templates/header.php';
 
             <div class="alert alert-light border mt-4 p-3 small text-muted">
                 <i class="bi bi-info-circle text-primary me-1"></i>
-                <strong>How the Waitlist works (BR-13):</strong> When a registered student cancels or the organizer expands capacity,
+                <strong>How the Waitlist works:</strong> When a registered student cancels or the organizer expands capacity,
                 the system automatically offers the seat to the <strong>next student in FIFO sequence</strong>.
                 You will have <strong><?php echo WAITLIST_OFFER_MINUTES; ?> minutes</strong> to accept before the offer passes to the next person.
             </div>

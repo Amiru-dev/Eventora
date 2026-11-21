@@ -55,12 +55,12 @@ include __DIR__ . '/../../templates/header.php';
                             <div><strong>Booking Reference:</strong> <?php echo e($booking['booking_ref']); ?></div>
                             <div><strong>Seats Confirmed:</strong> <?php echo (int)$booking['seats']; ?></div>
                             <div><strong>Total Amount:</strong> <?php echo format_currency($booking['total']); ?></div>
-                            <div><strong>Verification:</strong> <span class="text-success"><i class="bi bi-shield-check"></i> Cryptographically Verified (FR-PAY-004)</span></div>
+                            <div><strong>Verification:</strong> <span class="text-success"><i class="bi bi-shield-check"></i> Cryptographically Verified</span></div>
                         </div>
 
                         <div class="d-grid gap-2">
                             <a href="<?php echo APP_URL; ?>/pages/student/ticket.php?ref=<?php echo urlencode($booking['booking_ref']); ?>" class="btn btn-primary btn-lg">
-                                <i class="bi bi-qr-code me-2"></i> View & Print QR E-Ticket (FR-TKT-002)
+                                <i class="bi bi-qr-code me-2"></i> View & Print QR E-Ticket
                             </a>
                             <a href="<?php echo APP_URL; ?>/pages/student/bookings.php" class="btn btn-outline-secondary">
                                 My Bookings Dashboard
@@ -80,7 +80,7 @@ include __DIR__ . '/../../templates/header.php';
                     <div class="card-body p-4 p-md-5">
                         <div class="alert alert-info border-0 text-start small mb-4">
                             <i class="bi bi-info-circle-fill me-1"></i>
-                            <strong>Security Rule (FR-PAY-005, BR-19):</strong> Payment status is updated strictly from cryptographically verified server notifications, not from browser redirects alone. If your transaction just finished, please refresh in a few seconds.
+                            <strong>Security Verification:</strong> Payment status is updated strictly from cryptographically verified server notifications, not from browser redirects alone. If your transaction just finished, please refresh in a few seconds.
                         </div>
 
                         <div class="d-grid gap-2">

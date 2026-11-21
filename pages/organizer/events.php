@@ -66,7 +66,7 @@ include __DIR__ . '/../../templates/header.php';
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
                 <div>
                     <h1 class="h3 fw-bold mb-1">My Managed Events</h1>
-                    <p class="text-muted small mb-0">Create, edit and track approval lifecycle for events you organize (FR-ORG-005).</p>
+                    <p class="text-muted small mb-0">Create, edit and track approval lifecycle for events you organize.</p>
                 </div>
                 <div>
                     <a href="event_form.php" class="btn btn-primary btn-sm">
@@ -130,10 +130,10 @@ include __DIR__ . '/../../templates/header.php';
                                     </td>
                                     <td class="text-end">
                                         <div class="btn-group btn-group-sm">
-                                            <a href="event_form.php?id=<?php echo (int)$ev['event_id']; ?>" class="btn btn-outline-secondary" title="Edit Event Details (FR-EVT-006)">
+                                            <a href="event_form.php?id=<?php echo (int)$ev['event_id']; ?>" class="btn btn-outline-secondary" title="Edit Event Details">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                            <a href="checkin.php?event=<?php echo (int)$ev['event_id']; ?>" class="btn btn-outline-primary" title="Launch Venue Check-in (FR-TKT-003)">
+                                            <a href="checkin.php?event=<?php echo (int)$ev['event_id']; ?>" class="btn btn-outline-primary" title="Launch Venue Check-in">
                                                 <i class="bi bi-qr-code-scan"></i>
                                             </a>
                                         </div>

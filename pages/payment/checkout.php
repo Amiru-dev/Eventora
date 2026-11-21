@@ -89,7 +89,7 @@ include __DIR__ . '/../../templates/header.php';
                 <div>
                     <h5 class="alert-heading fw-bold mb-1">PayHere Sandbox / Assessment Test Mode</h5>
                     <p class="small mb-0 text-dark">
-                        This transaction is running in test mode. <strong>No live charges will be made</strong>, and no real card credentials will be collected or stored (FR-PAY-009, NFR-SEC-008).
+                        This transaction is running in test mode. <strong>No live charges will be made</strong>, and no real card credentials will be collected or stored.
                     </p>
                 </div>
             </div>
@@ -130,7 +130,7 @@ include __DIR__ . '/../../templates/header.php';
                         </div>
                         <?php if ((float)$booking['discount_amount'] > 0.00): ?>
                             <div class="d-flex justify-content-between small text-success mb-2">
-                                <span>Discount (<?php echo ucfirst(e($booking['discount_type'])); ?> Rule, BR-12):</span>
+                                <span>Discount (<?php echo ucfirst(e($booking['discount_type'])); ?>):</span>
                                 <span>- LKR <?php echo number_format($booking['discount_amount'], 2); ?></span>
                             </div>
                         <?php endif; ?>
