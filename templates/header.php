@@ -25,8 +25,11 @@ $baseUrl = defined('APP_URL') ? APP_URL : '';
 
     <!-- Bootstrap 5 CSS -->
     <link rel="stylesheet" href="<?php echo $baseUrl; ?>/assets/vendor/bootstrap/css/bootstrap.min.css">
-    <!-- Bootstrap Icons -->
+    <!-- Bootstrap Icons (Local Offline Font) -->
     <link rel="stylesheet" href="<?php echo $baseUrl; ?>/assets/vendor/bootstrap/css/bootstrap-icons.min.css">
+    <!-- Flaticon Uicons (For extended icons from Flaticon website: https://www.flaticon.com/uicons) -->
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
     <!-- Eventora Custom CSS -->
     <link rel="stylesheet" href="<?php echo $baseUrl; ?>/assets/css/style.css">
 </head>

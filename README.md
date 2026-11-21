@@ -23,9 +23,10 @@
 8. [Scheduled Background Jobs (Cron)](#8-scheduled-background-jobs-cron)
 9. [PayHere Sandbox Payment Integration](#9-payhere-sandbox-payment-integration)
 10. [Venue Check-in & QR Code System](#10-venue-check-in--qr-code-system)
-11. [Security & Compliance Matrix](#11-security--compliance-matrix)
-12. [Repository Directory Structure](#12-repository-directory-structure)
-13. [Verification & Sanity Testing](#13-verification--sanity-testing)
+11. [Icon System & Flaticon Integration Guide](#11-icon-system--flaticon-integration-guide)
+12. [Security & Compliance Matrix](#12-security--compliance-matrix)
+13. [Repository Directory Structure](#13-repository-directory-structure)
+14. [Verification & Sanity Testing](#14-verification--sanity-testing)
 
 ---
 
@@ -91,6 +92,7 @@ flowchart TD
 | **Web Server** | Apache HTTP Server | 2.4.x | Standard XAMPP distribution with `.htaccess` and URL handling |
 | **Database** | MySQL / MariaDB | 8.0+ / 10.4+ | InnoDB storage engine, foreign key constraints, `utf8mb4_unicode_ci` |
 | **UI Framework** | Bootstrap | 5.3.3 | Responsive grid, accessible utilities, Bootstrap Icons (`1.11.3`) |
+| **Icon Libraries** | Bootstrap Icons & Flaticon | 1.11.3 & Uicons 2.6 | Local offline BI font + Flaticon CDN (`fi fi-rr-*`) and SVG category assets |
 | **Client Framework** | AngularJS | 1.8.2 | Reactive client-side event filtering, debounce search, live pagination |
 | **Form Validation** | Vanilla JavaScript | ES6+ | HTML5 Constraint Validation API, real-time feedback, password strength meter |
 | **Charting Library** | Chart.js | 4.4.x | Interactive executive dashboard category distribution bar charts |
@@ -355,7 +357,42 @@ Eventora includes an enterprise e-ticketing and venue attendance subsystem (**Le
 
 ---
 
-## 11. Security & Compliance Matrix
+## 11. Icon System & Flaticon Integration Guide
+
+Eventora provides a dual-layer icon system to ensure sharp visual cues both offline and when expanding UI elements:
+
+### 1. Primary Built-in Icons (Bootstrap Icons)
+All standard dashboard, navigation, and button icons use Bootstrap Icons, bundled with offline font files (`assets/vendor/bootstrap/css/fonts/`):
+```html
+<i class="bi bi-calendar-event" aria-hidden="true"></i>
+```
+
+### 2. Flaticon Integration (For Extended & Custom Icons)
+When an icon is not included in the project or a more expressive design is needed, use the **Flaticon** ecosystem:
+
+- **Option A: Flaticon Uicons Webfont (Built-in via CDN):**
+  Eventora's global header ([`templates/header.php`](file:///C:/Users/ASUS/Documents/Eventora/templates/header.php)) automatically includes Flaticon Uicons (`uicons-regular-rounded` & `uicons-solid-rounded`). Search any icon on [Flaticon Uicons](https://www.flaticon.com/uicons) and use it directly:
+  ```html
+  <!-- Regular Rounded -->
+  <i class="fi fi-rr-ticket"></i>
+  <i class="fi fi-rr-graduation-cap"></i>
+  <i class="fi fi-rr-megaphone"></i>
+
+  <!-- Solid Rounded -->
+  <i class="fi fi-sr-heart"></i>
+  <i class="fi fi-sr-star"></i>
+  ```
+
+- **Option B: Flaticon SVGs in `assets/img/icons/`:**
+  For category badges or offline illustrations, download free SVGs from [Flaticon.com](https://www.flaticon.com/) into `assets/img/icons/`. Eventora includes pre-packaged SVGs for all event categories:
+  - `workshop.svg` · `seminar.svg` · `sports.svg` · `cultural.svg` · `tech.svg` · `social.svg` · `ticket.svg` · `calendar.svg`
+  ```html
+  <img src="<?php echo APP_URL; ?>/assets/img/icons/tech.svg" alt="Tech" width="24" height="24">
+  ```
+
+---
+
+## 12. Security & Compliance Matrix
 
 Eventora was engineered to satisfy all Non-Functional Security Requirements (**NFR-SEC-001** through **NFR-SEC-009**):
 
@@ -374,7 +411,7 @@ Eventora was engineered to satisfy all Non-Functional Security Requirements (**N
 
 ---
 
-## 12. Repository Directory Structure
+## 13. Repository Directory Structure
 
 ```
 Eventora/
@@ -468,6 +505,8 @@ Eventora/
 │   └── send_reminders.php             # Dispatches 24-hour event reminder emails
 │
 └── assets/                            # Static Frontend Web Assets
+    ├── img/
+    │   └── icons/                     # Vector SVG Category Icons (Flaticon design system)
     ├── css/
     │   └── style.css                  # Custom theme, CSS variables, print styles, badges
     ├── js/
@@ -487,7 +526,7 @@ Eventora/
 
 ---
 
-## 13. Verification & Sanity Testing
+## 14. Verification & Sanity Testing
 
 Eventora has been verified end-to-end. To run module validation tests from your local terminal:
 
