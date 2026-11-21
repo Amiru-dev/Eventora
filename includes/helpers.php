@@ -185,6 +185,38 @@ function format_datetime(string $datetime, string $format = 'M d, Y · h:i A'): 
 }
 
 /**
+ * Convenient alias for format_datetime
+ */
+function format_date(string $datetime, string $format = 'M d, Y · h:i A'): string
+{
+    return format_datetime($datetime, $format);
+}
+
+/**
+ * Convenient alias for set_flash_message
+ */
+function set_flash(string $type, string $message): void
+{
+    set_flash_message($type, $message);
+}
+
+/**
+ * Convenient alias for render_flash_messages
+ */
+function flash_messages(): string
+{
+    return render_flash_messages();
+}
+
+/**
+ * Convenient alias for verify_csrf_token
+ */
+function verify_csrf(?string $token = null): bool
+{
+    return verify_csrf_token($token);
+}
+
+/**
  * Safe HTTP header redirect
  * 
  * @param string $url

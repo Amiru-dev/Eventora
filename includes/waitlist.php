@@ -256,6 +256,16 @@ function offer_seats_to_waitlist(int $eventId, int $seatsFreed = 1): int
             ");
             $updStmt->execute([':exp' => $offerExpiry, ':id' => $waiter['entry_id']]);
             $offersCount++;
+
+            // Dispatch waitlist offer email notification (FR-MAIL-003, BR-13)
+            if (file_exists(__DIR__ . '/mailer.php')) {
+                require_once __DIR__ . '/mailer.php';
+                try {
+                    send_waitlist_offer_email((int)$waiter['entry_id']);
+                } catch (\Throwable $me) {
+                    error_log('Waitlist offer email error: ' . $me->getMessage());
+                }
+            }
         }
 
         return $offersCount;

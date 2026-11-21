@@ -357,6 +357,16 @@ function create_booking(int $userId, int $eventId, int $seats, ?string $promoCod
 
         $pdo->commit();
 
+        // Dispatch booking confirmation email for free events (FR-MAIL-001)
+        if ($isFree && file_exists(__DIR__ . '/mailer.php')) {
+            require_once __DIR__ . '/mailer.php';
+            try {
+                send_booking_confirmation_email($bookingId);
+            } catch (\Throwable $me) {
+                error_log('Free booking confirmation email error: ' . $me->getMessage());
+            }
+        }
+
         return [
             'success' => true,
             'error'   => null,

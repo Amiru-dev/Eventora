@@ -220,6 +220,17 @@ function process_payhere_notification(array $postData): array
             }
 
             $pdo->commit();
+
+            // Dispatch booking confirmation email for paid booking (FR-MAIL-001)
+            if (file_exists(__DIR__ . '/mailer.php')) {
+                require_once __DIR__ . '/mailer.php';
+                try {
+                    send_booking_confirmation_email($bookingId);
+                } catch (\Throwable $me) {
+                    error_log('Paid booking confirmation email error: ' . $me->getMessage());
+                }
+            }
+
             return ['success' => true, 'message' => 'Payment verified and booking confirmed.', 'http_code' => 200];
 
         } else {

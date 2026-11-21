@@ -336,7 +336,19 @@ function admin_approve_event(int $eventId, int $adminUserId): bool
             ':admin_id' => $adminUserId,
             ':event_id' => $eventId
         ]);
-        return $stmt->rowCount() > 0;
+        $ok = $stmt->rowCount() > 0;
+
+        // Dispatch event approval notification (FR-MAIL-004)
+        if ($ok && file_exists(__DIR__ . '/mailer.php')) {
+            require_once __DIR__ . '/mailer.php';
+            try {
+                send_event_approval_email($eventId, 'published');
+            } catch (\Throwable $me) {
+                error_log('Event approval email error: ' . $me->getMessage());
+            }
+        }
+
+        return $ok;
     } catch (PDOException $e) {
         return false;
     }
@@ -368,7 +380,19 @@ function admin_reject_event(int $eventId, int $adminUserId, string $rejectionRea
             ':reason'   => sanitize_input($rejectionReason),
             ':event_id' => $eventId
         ]);
-        return $stmt->rowCount() > 0;
+        $ok = $stmt->rowCount() > 0;
+
+        // Dispatch event rejection notification (FR-MAIL-004)
+        if ($ok && file_exists(__DIR__ . '/mailer.php')) {
+            require_once __DIR__ . '/mailer.php';
+            try {
+                send_event_approval_email($eventId, 'rejected', $rejectionReason);
+            } catch (\Throwable $me) {
+                error_log('Event rejection email error: ' . $me->getMessage());
+            }
+        }
+
+        return $ok;
     } catch (PDOException $e) {
         return false;
     }
@@ -467,7 +491,24 @@ function admin_approve_organizer(int $profileId, int $adminUserId): bool
             ':admin_id' => $adminUserId,
             ':id'       => $profileId
         ]);
-        return $stmt->rowCount() > 0;
+        $ok = $stmt->rowCount() > 0;
+
+        // Dispatch organizer approval notification (FR-MAIL-004)
+        if ($ok && file_exists(__DIR__ . '/mailer.php')) {
+            require_once __DIR__ . '/mailer.php';
+            try {
+                $uidStmt = $pdo->prepare("SELECT user_id FROM organizer_profiles WHERE profile_id = :id");
+                $uidStmt->execute([':id' => $profileId]);
+                $uid = (int)$uidStmt->fetchColumn();
+                if ($uid > 0) {
+                    send_organizer_approval_email($uid, 'approved');
+                }
+            } catch (\Throwable $me) {
+                error_log('Organizer approval email error: ' . $me->getMessage());
+            }
+        }
+
+        return $ok;
     } catch (PDOException $e) {
         return false;
     }
@@ -499,7 +540,24 @@ function admin_reject_organizer(int $profileId, int $adminUserId, string $reason
             ':reason'   => sanitize_input($reason),
             ':id'       => $profileId
         ]);
-        return $stmt->rowCount() > 0;
+        $ok = $stmt->rowCount() > 0;
+
+        // Dispatch organizer rejection notification (FR-MAIL-004)
+        if ($ok && file_exists(__DIR__ . '/mailer.php')) {
+            require_once __DIR__ . '/mailer.php';
+            try {
+                $uidStmt = $pdo->prepare("SELECT user_id FROM organizer_profiles WHERE profile_id = :id");
+                $uidStmt->execute([':id' => $profileId]);
+                $uid = (int)$uidStmt->fetchColumn();
+                if ($uid > 0) {
+                    send_organizer_approval_email($uid, 'rejected', $reason);
+                }
+            } catch (\Throwable $me) {
+                error_log('Organizer rejection email error: ' . $me->getMessage());
+            }
+        }
+
+        return $ok;
     } catch (PDOException $e) {
         return false;
     }
