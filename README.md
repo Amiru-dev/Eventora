@@ -53,11 +53,11 @@ Eventora adheres to a classical three-tier enterprise web architecture running o
 flowchart TD
     subgraph Client ["Presentation Layer (Browser)"]
         A["Students / Visitors / Organizers / Admins"]
-        B["AngularJS 1.x Reactive Client & Form Validators"]
+        B["AngularJS 1.8 Reactive Client & Form Validators"]
         C["Bootstrap 5 Responsive UI (Desktop & 360px Mobile)"]
     end
 
-    subgraph Server ["Application Layer (Apache + PHP 8.x)"]
+    subgraph Server ["Application Layer (Apache + PHP 8.2)"]
         D["PHP Routing & Controllers (/pages)"]
         E["JSON REST Endpoints (/api)"]
         F["Business Logic Engines (/includes)"]
@@ -88,14 +88,14 @@ flowchart TD
 
 | Component | Technology | Version | Purpose / Notes |
 |---|---|---|---|
-| **Server Runtime** | PHP | 8.2.x | Procedural and functional domain engines with strict typed signatures |
-| **Web Server** | Apache HTTP Server | 2.4.x | Standard XAMPP distribution with `.htaccess` and URL handling |
+| **Server Runtime** | PHP | 8.2 | Procedural and functional domain engines with strict typed signatures |
+| **Web Server** | Apache HTTP Server | 2.4 | Standard XAMPP distribution with `.htaccess` and URL handling |
 | **Database** | MySQL / MariaDB | 8.0+ / 10.4+ | InnoDB storage engine, foreign key constraints, `utf8mb4_unicode_ci` |
 | **UI Framework** | Bootstrap | 5.3.3 | Responsive grid, accessible utilities, Bootstrap Icons (`1.11.3`) |
 | **Icon Libraries** | Bootstrap Icons & Flaticon | 1.11.3 & Uicons 2.6 | Local offline BI font + Flaticon CDN (`fi fi-rr-*`) and SVG category assets |
 | **Client Framework** | AngularJS | 1.8.2 | Reactive client-side event filtering, debounce search, live pagination |
 | **Form Validation** | Vanilla JavaScript | ES6+ | HTML5 Constraint Validation API, real-time feedback, password strength meter |
-| **Charting Library** | Chart.js | 4.4.x | Interactive executive dashboard category distribution bar charts |
+| **Charting Library** | Chart.js | 4.4 | Interactive executive dashboard category distribution bar charts |
 | **Payment Gateway** | PayHere Sandbox | v1.0 | Off-site checkout, server-to-server IPN callbacks, MD5 signature check |
 | **Email Service** | PHPMailer | 6.9.1 | Transactional SMTP with fallback offline simulation logger |
 | **QR Code Engine** | phpqrcode | 1.1.4 | Pure PHP vector SVG and raster QR generation (zero external dependencies) |
@@ -153,9 +153,9 @@ Level 15: Final Polish, Comprehensive Documentation (NFR-MNT-004) & Verification
 ### Software Requirements
 - **Operating System:** Windows 10/11, macOS 12+, or Ubuntu Linux 20.04+
 - **XAMPP / LAMP / MAMP:**
-  - PHP 8.1 or PHP 8.2 (with `pdo_mysql`, `mbstring`, `openssl`, `gd`, `curl` extensions enabled)
+  - PHP 8.2 (with `pdo_mysql`, `mbstring`, `openssl`, `gd`, `curl` extensions enabled)
   - Apache 2.4+
-  - MySQL 8.0+ or MariaDB 10.4+
+  - MySQL 8.0+ 
 - **Web Browser:** Google Chrome 90+, Mozilla Firefox 88+, Microsoft Edge 90+, or Safari 15+
 
 ---
@@ -166,7 +166,7 @@ Level 15: Final Polish, Comprehensive Documentation (NFR-MNT-004) & Verification
 Place the repository in your preferred workspace directory (or inside your web server root such as `C:\xampp\htdocs\Eventora`):
 
 ```bash
-git clone https://github.com/AUVidanapathirana/Eventora.git Eventora
+git clone https://github.com/Amiru-dev/Eventora.git Eventora
 cd Eventora
 ```
 
@@ -329,27 +329,27 @@ Add the following entries via `crontab -e`:
 
 Eventora fully implements the PayHere payment gateway workflow using offsite redirect and server-to-server asynchronous notifications:
 
-### Checkout Workflow (FR-PAY-001 to FR-PAY-010)
+### Checkout Workflow
 1. **Initiation:** Student reserves seats and selects "Pay Online".
 2. **Hash Generation (FR-PAY-004):** Cryptographic MD5 hash computed server-side:
    $$\text{hash} = \text{strtoupper}(\text{md5}(\text{merchant\_id} + \text{order\_id} + \text{amount\_formatted} + \text{currency} + \text{strtoupper}(\text{md5}(\text{merchant\_secret}))))$$
-3. **Offsite Redirection:** User is redirected to PayHere Sandbox modal/hosted page. No credit card numbers or CVV are stored on Eventora servers (**NFR-SEC-008**).
+3. **Offsite Redirection:** User is redirected to PayHere Sandbox modal/hosted page. No credit card numbers or CVV are stored on Eventora servers.
 4. **Instant Payment Notification (IPN):** PayHere posts back to [`pages/payment/notify.php`](file:///C:/Users/ASUS/Documents/Eventora/pages/payment/notify.php). Signature is verified, seats are locked, and status becomes `confirmed`.
 5. **Idempotency (FR-PAY-006):** Duplicate IPN callbacks are detected and safely acknowledged with HTTP 200 without duplicate seat deductions or duplicate tickets.
 
 ### Sandbox Test Cards (PayHere Sandbox)
-- **Visa / Mastercard Test Number:** `4111 1111 1111 1111`
+- **Visa Test Number:** `4916217501611292`
+- **MasterCard Test Number:** `5307732125531191`
 - **Expiry Date:** Any future date (e.g. `12/28`)
 - **CVV:** Any 3 digits (e.g. `123`)
-- **OTP:** Any 6 digits (e.g. `123456`)
 
 ---
 
 ## 10. Venue Check-in & QR Code System
 
-Eventora includes an enterprise e-ticketing and venue attendance subsystem (**Level 8**):
+Eventora includes an enterprise e-ticketing and venue attendance subsystem:
 
-- **Cryptographically Secure Tokens (FR-TKT-001, NFR-SEC-007):** Generated using `bin2hex(random_bytes(16))` resulting in 32 hex character, unguessable tokens (`TKT-...`).
+- **Cryptographically Secure Tokens:** Generated using `bin2hex(random_bytes(16))` resulting in 32 hex character, unguessable tokens (`TKT-...`).
 - **Offline Pure SVG QR Generation:** Rendered directly by [`api/qrcode.php`](file:///C:/Users/ASUS/Documents/Eventora/api/qrcode.php) using bundled `phpqrcode` library. Does not depend on Google Charts or third-party web APIs.
 - **Webcam Check-in Scanner:** Located at [`pages/organizer/checkin.php`](file:///C:/Users/ASUS/Documents/Eventora/pages/organizer/checkin.php). Uses HTML5 `getUserMedia` video capture with sound effect feedback.
 - **Duplicate Check-in Prevention (BR-16):** Database enforces `UNIQUE KEY uk_checkin_ticket (ticket_id)` and transactional `SELECT FOR UPDATE` row-level locks. Tickets can only be admitted once; duplicate attempts are logged to the audit trail as `checkin.duplicate_rejected`.
@@ -394,7 +394,7 @@ When an icon is not included in the project or a more expressive design is neede
 
 ## 12. Security & Compliance Matrix
 
-Eventora was engineered to satisfy all Non-Functional Security Requirements (**NFR-SEC-001** through **NFR-SEC-009**):
+Eventora was engineered to satisfy all Non-Functional Security Requirements:
 
 | ID | Security Control | Implementation Location | Compliance Mechanism |
 |---|---|---|---|
