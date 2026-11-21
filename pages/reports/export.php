@@ -21,6 +21,13 @@ if ($type === 'system_bookings') {
     export_bookings_csv();
 }
 
+// System Audit Log Export (FR-AUD-001, FR-REP-005, NFR-SEC-009)
+if ($type === 'audit_logs') {
+    require_role('admin');
+    require_once __DIR__ . '/../../includes/audit.php';
+    export_audit_logs_csv($_GET);
+}
+
 // Organizer / Admin Scoped Exports
 if ($type === 'org_bookings') {
     require_role(['organizer', 'admin']);

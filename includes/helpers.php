@@ -9,6 +9,22 @@ if (!defined('APP_NAME')) {
 }
 
 /**
+ * Send standard HTTP security headers (NFR-SEC-009)
+ */
+function send_security_headers(): void
+{
+    if (headers_sent()) {
+        return;
+    }
+    header('X-Frame-Options: SAMEORIGIN');
+    header('X-Content-Type-Options: nosniff');
+    header('X-XSS-Protection: 1; mode=block');
+    header('Referrer-Policy: strict-origin-when-cross-origin');
+    header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; img-src 'self' data: https: blob:;");
+    header('Permissions-Policy: camera=(self), microphone=(), geolocation=()');
+}
+
+/**
  * Start PHP session safely with hardened cookie parameters
  */
 function start_session_safe(): void
@@ -25,6 +41,7 @@ function start_session_safe(): void
         ]);
         session_start();
     }
+    send_security_headers();
 }
 
 /**

@@ -19,6 +19,7 @@ require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/audit.php';
 
 /**
  * Create a new event draft / submission by an organizer
@@ -338,6 +339,10 @@ function admin_approve_event(int $eventId, int $adminUserId): bool
         ]);
         $ok = $stmt->rowCount() > 0;
 
+        if ($ok) {
+            log_audit_action($adminUserId, 'event.approved', 'event', $eventId);
+        }
+
         // Dispatch event approval notification (FR-MAIL-004)
         if ($ok && file_exists(__DIR__ . '/mailer.php')) {
             require_once __DIR__ . '/mailer.php';
@@ -381,6 +386,14 @@ function admin_reject_event(int $eventId, int $adminUserId, string $rejectionRea
             ':event_id' => $eventId
         ]);
         $ok = $stmt->rowCount() > 0;
+
+        if ($ok) {
+            log_audit_action($adminUserId, 'event.rejected', 'event', $eventId, ['reason' => $rejectionReason]);
+        }
+
+        if ($ok) {
+            log_audit_action($adminUserId, 'event.approved', 'event', $eventId);
+        }
 
         // Dispatch event rejection notification (FR-MAIL-004)
         if ($ok && file_exists(__DIR__ . '/mailer.php')) {
@@ -426,7 +439,11 @@ function admin_set_event_status(int $eventId, string $status, int $adminUserId):
             ':status'   => $status,
             ':event_id' => $eventId
         ]);
-        return $stmt->rowCount() > 0;
+        $ok = $stmt->rowCount() > 0;
+        if ($ok) {
+            log_audit_action($adminUserId, 'event.status_changed', 'event', $eventId, ['status' => $status]);
+        }
+        return $ok;
     } catch (PDOException $e) {
         return false;
     }
@@ -493,6 +510,14 @@ function admin_approve_organizer(int $profileId, int $adminUserId): bool
         ]);
         $ok = $stmt->rowCount() > 0;
 
+        if ($ok) {
+            log_audit_action($adminUserId, 'organizer.approved', 'organizer_profile', $profileId);
+        }
+
+        if ($ok) {
+            log_audit_action($adminUserId, 'event.approved', 'event', $eventId);
+        }
+
         // Dispatch organizer approval notification (FR-MAIL-004)
         if ($ok && file_exists(__DIR__ . '/mailer.php')) {
             require_once __DIR__ . '/mailer.php';
@@ -542,6 +567,14 @@ function admin_reject_organizer(int $profileId, int $adminUserId, string $reason
         ]);
         $ok = $stmt->rowCount() > 0;
 
+        if ($ok) {
+            log_audit_action($adminUserId, 'organizer.rejected', 'organizer_profile', $profileId, ['reason' => $reason]);
+        }
+
+        if ($ok) {
+            log_audit_action($adminUserId, 'event.approved', 'event', $eventId);
+        }
+
         // Dispatch organizer rejection notification (FR-MAIL-004)
         if ($ok && file_exists(__DIR__ . '/mailer.php')) {
             require_once __DIR__ . '/mailer.php';
@@ -579,7 +612,11 @@ function admin_suspend_organizer(int $profileId): bool
             WHERE profile_id = :id
         ");
         $stmt->execute([':id' => $profileId]);
-        return $stmt->rowCount() > 0;
+        $ok = $stmt->rowCount() > 0;
+        if ($ok) {
+            log_audit_action(null, 'organizer.suspended', 'organizer_profile', $profileId);
+        }
+        return $ok;
     } catch (PDOException $e) {
         return false;
     }

@@ -21,6 +21,7 @@ require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/audit.php';
 
 /**
  * Recalculate price authoritatively on the server
@@ -357,6 +358,13 @@ function create_booking(int $userId, int $eventId, int $seats, ?string $promoCod
 
         $pdo->commit();
 
+        log_audit_action($userId, 'booking.created', 'booking', $bookingId, [
+            'booking_ref' => $bookingRef,
+            'seats'       => $seats,
+            'total'       => $total,
+            'status'      => $status
+        ]);
+
         // Dispatch booking confirmation email for free events (FR-MAIL-001)
         if ($isFree && file_exists(__DIR__ . '/mailer.php')) {
             require_once __DIR__ . '/mailer.php';
@@ -539,6 +547,11 @@ function cancel_booking(int $bookingId, int $userId): array
 
         $pdo->commit();
 
+        log_audit_action($userId, 'booking.cancelled', 'booking', $bookingId, [
+            'booking_ref' => $booking['booking_ref'],
+            'seats'       => (int)$booking['seats']
+        ]);
+
         return ['success' => true, 'error' => null];
 
     } catch (PDOException $e) {
@@ -592,6 +605,12 @@ function expire_abandoned_seat_holds(): int
 
             $pdo->commit();
             $releasedCount++;
+        }
+
+        if ($releasedCount > 0) {
+            log_audit_action(null, 'booking.holds_expired', 'system', null, [
+                'count' => $releasedCount
+            ]);
         }
     } catch (Exception $e) {
         if (isset($pdo) && $pdo->inTransaction()) {

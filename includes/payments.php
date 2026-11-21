@@ -22,6 +22,7 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/payhere.php';
 require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/audit.php';
 
 /**
  * Generate PayHere Checkout Security Hash
@@ -221,6 +222,14 @@ function process_payhere_notification(array $postData): array
 
             $pdo->commit();
 
+            log_audit_action($userId, 'payment.verified', 'payment', (int)$payment['payment_id'], [
+                'order_ref'     => $orderRef,
+                'amount'        => $payhereAmount,
+                'status'        => 'success',
+                'booking_ref'   => $booking['booking_ref'] ?? null,
+                'md5_verified'  => true
+            ]);
+
             // Dispatch booking confirmation email for paid booking (FR-MAIL-001)
             if (file_exists(__DIR__ . '/mailer.php')) {
                 require_once __DIR__ . '/mailer.php';
@@ -275,6 +284,12 @@ function process_payhere_notification(array $postData): array
             $updBkg->execute([':bid' => $bookingId]);
 
             $pdo->commit();
+
+            log_audit_action($userId, 'payment.failed', 'payment', (int)($payment['payment_id'] ?? 0), [
+                'order_ref'     => $orderRef,
+                'status'        => $payStatus,
+                'response_code' => $statusCode
+            ]);
             return ['success' => true, 'message' => 'Payment failed/cancelled. Seat hold released.', 'http_code' => 200];
         }
 

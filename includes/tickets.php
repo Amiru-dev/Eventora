@@ -9,6 +9,7 @@ if (!defined('APP_ROOT')) {
 }
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/audit.php';
 
 /**
  * Generate cryptographically secure, opaque ticket token
@@ -277,6 +278,10 @@ function verify_and_checkin_ticket(string $token, int $staffUserId, ?int $expect
     }
 
     if ($status === 'used') {
+        log_audit_action($staffUserId, 'checkin.duplicate_rejected', 'ticket', (int)($ticket['ticket_id'] ?? 0), [
+            'event_id' => $ticket['event_id'] ?? null,
+            'token'    => substr($token, 0, 8) . '...'
+        ]);
         return [
             'result'  => 'ALREADY_USED',
             'message' => 'ALREADY USED: This ticket was already checked in at ' .
@@ -345,6 +350,12 @@ function verify_and_checkin_ticket(string $token, int $staffUserId, ?int $expect
         $updTkt->execute([':tid' => $ticketId]);
 
         $pdo->commit();
+
+        log_audit_action($staffUserId, 'checkin.successful', 'ticket', $ticketId, [
+            'event_id' => $eventId,
+            'attendee' => $ticket['student_name'] ?? 'Attendee',
+            'seats'    => (int)($ticket['seats'] ?? 1)
+        ]);
 
         $ticket['ticket_status'] = 'used';
         $ticket['checked_in_at'] = $now;

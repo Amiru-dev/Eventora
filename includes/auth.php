@@ -18,8 +18,62 @@
 require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/audit.php';
 
 start_session_safe();
+
+/**
+ * Check if client IP is currently rate-limited due to repeated failed logins
+ * NFR-SEC-004, NFR-SEC-007
+ * 
+ * @param string $ip
+ * @return bool
+ */
+function is_login_rate_limited(string $ip): bool
+{
+    start_session_safe();
+    $attempts = $_SESSION['login_failures'][$ip] ?? null;
+    if ($attempts && $attempts['count'] >= 5) {
+        if (time() - $attempts['first_time'] < 900) { // 15-minute lockout window
+            return true;
+        } else {
+            // Lockout window expired; reset
+            unset($_SESSION['login_failures'][$ip]);
+        }
+    }
+    return false;
+}
+
+/**
+ * Record a failed login attempt for rate-limiting
+ * 
+ * @param string $ip
+ */
+function record_login_failure_rate(string $ip): void
+{
+    start_session_safe();
+    if (!isset($_SESSION['login_failures'][$ip])) {
+        $_SESSION['login_failures'][$ip] = [
+            'count'      => 1,
+            'first_time' => time()
+        ];
+    } else {
+        $_SESSION['login_failures'][$ip]['count']++;
+    }
+}
+
+/**
+ * Reset failed login attempts upon successful login
+ * 
+ * @param string $ip
+ */
+function reset_login_failures_rate(string $ip): void
+{
+    start_session_safe();
+    if (isset($_SESSION['login_failures'][$ip])) {
+        unset($_SESSION['login_failures'][$ip]);
+    }
+}
 
 /**
  * Register a new student account
@@ -73,6 +127,10 @@ function register_student(string $name, string $email, string $password): array
         ]);
 
         $userId = (int)$pdo->lastInsertId();
+        log_audit_action($userId, 'auth.register_student', 'user', $userId, [
+            'name'  => $name,
+            'email' => $email
+        ]);
         return ['success' => true, 'error' => null, 'user_id' => $userId];
 
     } catch (PDOException $e) {
@@ -159,6 +217,11 @@ function register_organizer(
         ]);
 
         $pdo->commit();
+        log_audit_action($userId, 'auth.register_organizer', 'user', $userId, [
+            'name'         => $name,
+            'email'        => $email,
+            'organization' => $organization
+        ]);
         return ['success' => true, 'error' => null];
 
     } catch (PDOException $e) {
@@ -186,6 +249,21 @@ function login_user(string $email, string $password): array
         return ['success' => false, 'error' => 'Please enter both your email and password.'];
     }
 
+    $clientIp = get_client_ip();
+
+    // Brute-force throttling check (NFR-SEC-004, NFR-SEC-007)
+    if (is_login_rate_limited($clientIp)) {
+        log_audit_action(null, 'security.rate_limited', 'auth', null, [
+            'ip'     => $clientIp,
+            'email'  => $email,
+            'reason' => 'exceeded_5_failed_attempts'
+        ]);
+        return [
+            'success' => false,
+            'error'   => 'Too many failed login attempts from this IP address. Please wait 15 minutes before trying again.'
+        ];
+    }
+
     try {
         $pdo = getDBConnection();
         $stmt = $pdo->prepare("
@@ -199,38 +277,70 @@ function login_user(string $email, string $password): array
         $user = $stmt->fetch();
 
         if (!$user) {
+            record_login_failure_rate($clientIp);
+            log_audit_action(null, 'auth.login_failure', 'user', null, [
+                'email'  => $email,
+                'reason' => 'user_not_found',
+                'ip'     => $clientIp
+            ]);
             return ['success' => false, 'error' => 'Invalid email address or password.'];
         }
 
         // Verify hashed password (FR-AUTH-002)
         if (!password_verify($password, $user['password_hash'])) {
+            record_login_failure_rate($clientIp);
+            log_audit_action((int)$user['user_id'], 'auth.login_failure', 'user', (int)$user['user_id'], [
+                'email'  => $email,
+                'reason' => 'invalid_password',
+                'ip'     => $clientIp
+            ]);
             return ['success' => false, 'error' => 'Invalid email address or password.'];
         }
 
         // Account status check
         if ((int)$user['is_active'] !== 1) {
+            record_login_failure_rate($clientIp);
+            log_audit_action((int)$user['user_id'], 'auth.login_blocked', 'user', (int)$user['user_id'], [
+                'email'  => $email,
+                'reason' => 'account_deactivated'
+            ]);
             return ['success' => false, 'error' => 'Your account has been deactivated. Please contact the administrator.'];
         }
 
         // Organizer approval gate (FR-AUTH-004, UC-03)
         if ($user['role'] === 'organizer') {
             if ($user['org_status'] === 'pending') {
+                record_login_failure_rate($clientIp);
+                log_audit_action((int)$user['user_id'], 'auth.login_denied', 'organizer_profile', (int)($user['profile_id'] ?? 0), [
+                    'status' => 'pending'
+                ]);
                 return [
                     'success' => false,
                     'error'   => 'Your organizer account is pending administrator approval. You will receive access once verified.'
                 ];
             } elseif ($user['org_status'] === 'rejected') {
+                record_login_failure_rate($clientIp);
+                log_audit_action((int)$user['user_id'], 'auth.login_denied', 'organizer_profile', (int)($user['profile_id'] ?? 0), [
+                    'status' => 'rejected'
+                ]);
                 return [
                     'success' => false,
                     'error'   => 'Your organizer application was rejected. Please contact campus administration.'
                 ];
             } elseif ($user['org_status'] === 'suspended') {
+                record_login_failure_rate($clientIp);
+                log_audit_action((int)$user['user_id'], 'auth.login_denied', 'organizer_profile', (int)($user['profile_id'] ?? 0), [
+                    'status' => 'suspended'
+                ]);
                 return [
                     'success' => false,
                     'error'   => 'Your organizer privileges have been suspended (FR-ORG-006).'
                 ];
             }
         }
+
+        // Authentication successful - reset failure counter
+        reset_login_failures_rate($clientIp);
 
         // Regenerate session ID to prevent session fixation attacks (FR-AUTH-005)
         session_regenerate_id(true);
@@ -244,6 +354,12 @@ function login_user(string $email, string $password): array
             'profile_id'   => $user['profile_id'] ? (int)$user['profile_id'] : null,
             'organization' => $user['organization'] ?? null
         ];
+
+        // Record successful login in audit log (FR-AUD-001)
+        log_audit_action((int)$user['user_id'], 'auth.login_success', 'user', (int)$user['user_id'], [
+            'email' => $user['email'],
+            'role'  => $user['role']
+        ]);
 
         return ['success' => true, 'error' => null, 'user' => $_SESSION['user']];
 
@@ -260,6 +376,12 @@ function login_user(string $email, string $password): array
 function logout_user(): void
 {
     start_session_safe();
+    $user = current_user();
+    if ($user) {
+        $uid = (int)($user['id'] ?? $user['user_id'] ?? 0);
+        log_audit_action($uid, 'auth.logout', 'user', $uid);
+    }
+
     $_SESSION = [];
     if (ini_get("session.use_cookies")) {
         $params = session_get_cookie_params();

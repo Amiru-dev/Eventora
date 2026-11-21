@@ -9,6 +9,7 @@ if (!defined('APP_NAME')) {
 }
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/audit.php';
 
 /**
  * Get all promo codes
@@ -196,7 +197,13 @@ function create_promo_code(array $data, int $adminUserId): array
             ':created_by'     => $adminUserId
         ]);
 
-        return ['success' => true, 'promo_id' => (int)$pdo->lastInsertId(), 'error' => null];
+        $promoId = (int)$pdo->lastInsertId();
+        log_audit_action($adminUserId, 'promo.created', 'promo_code', $promoId, [
+            'code'          => $data['code'] ?? '',
+            'discount_type' => $discountType,
+            'discount_val'  => $discountVal
+        ]);
+        return ['success' => true, 'promo_id' => $promoId, 'error' => null];
 
     } catch (\PDOException $e) {
         error_log('create_promo_code error: ' . $e->getMessage());
@@ -224,7 +231,11 @@ function toggle_promo_status(int $promoId): bool
             WHERE promo_id = :id
         ");
         $stmt->execute([':id' => $promoId]);
-        return $stmt->rowCount() > 0;
+        $ok = $stmt->rowCount() > 0;
+        if ($ok) {
+            log_audit_action(null, 'promo.status_toggled', 'promo_code', $promoId);
+        }
+        return $ok;
     } catch (\PDOException $e) {
         error_log('toggle_promo_status error: ' . $e->getMessage());
         return false;
@@ -242,6 +253,7 @@ function delete_promo_code(int $promoId): array
 {
     $pdo = get_db_connection();
     if (!$pdo) {
+        log_audit_action(null, 'promo.deleted', 'promo_code', $promoId);
         return ['success' => true, 'action' => 'deleted', 'error' => null];
     }
 
@@ -267,6 +279,7 @@ function delete_promo_code(int $promoId): array
         // Hard delete if never used
         $del = $pdo->prepare("DELETE FROM promo_codes WHERE promo_id = :id");
         $del->execute([':id' => $promoId]);
+        log_audit_action(null, 'promo.deleted', 'promo_code', $promoId);
         return ['success' => true, 'action' => 'deleted', 'error' => null];
 
     } catch (\PDOException $e) {
@@ -377,7 +390,11 @@ function increment_promo_usage(int $promoId): bool
     try {
         $stmt = $pdo->prepare("UPDATE promo_codes SET times_used = times_used + 1 WHERE promo_id = :id");
         $stmt->execute([':id' => $promoId]);
-        return $stmt->rowCount() > 0;
+        $ok = $stmt->rowCount() > 0;
+        if ($ok) {
+            log_audit_action(null, 'promo.status_toggled', 'promo_code', $promoId);
+        }
+        return $ok;
     } catch (\PDOException $e) {
         error_log('increment_promo_usage error: ' . $e->getMessage());
         return false;

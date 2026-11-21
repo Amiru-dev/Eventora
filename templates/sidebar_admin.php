@@ -43,6 +43,11 @@ $adminActive = $adminActive ?? 'dashboard';
     <div class="dashboard-sidebar-title">System & Records</div>
     <ul class="nav flex-column dashboard-nav">
         <li class="nav-item">
+            <a class="nav-link <?php echo ($adminActive === 'audit') ? 'active' : ''; ?>" href="<?php echo $baseUrl; ?>/pages/admin/audit_log.php">
+                <i class="bi bi-journal-text"></i> System Audit Trail
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="<?php echo $baseUrl; ?>/index.php" target="_blank">
                 <i class="bi bi-box-arrow-up-right"></i> View Public Site
             </a>
