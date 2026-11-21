@@ -39,3 +39,17 @@ function getDBConnection(): PDO
 
     return $pdo;
 }
+
+/**
+ * Safe helper to get PDO connection or null if database is unreachable.
+ *
+ * @return PDO|null
+ */
+function get_db_connection(): ?PDO
+{
+    try {
+        return getDBConnection();
+    } catch (\Throwable $e) {
+        return null;
+    }
+}
