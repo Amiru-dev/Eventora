@@ -203,16 +203,45 @@ mysql -u root -p eventora < setup/seed.sql
 
 ---
 
-### Step 3: Configure Database Connection
-Open `config/database.php` and set your MySQL credentials (especially the password configured in your MySQL Workbench / MySQL Server):
+### Step 3: Configure Environment Variables
+Eventora uses a `.env` file for configuration. Copy the example file and customize it:
 
-```php
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'eventora');
-define('DB_USER', 'root');
-define('DB_PASS', 'YOUR_MYSQL_PASSWORD'); // Set to your MySQL Workbench/Server root password (empty '' for default XAMPP)
-define('DB_CHARSET', 'utf8mb4');
+```bash
+# Copy the example file
+cp .env.example .env
+
+# Edit .env with your actual credentials
 ```
+
+Open `.env` and set your credentials:
+
+```env
+# Database Configuration
+DB_HOST=localhost
+DB_NAME=eventora
+DB_USER=root
+DB_PASS=YOUR_MYSQL_PASSWORD  # Set to your MySQL Workbench/Server root password
+DB_CHARSET=utf8mb4
+
+# Application Configuration
+APP_URL=http://localhost:8000  # Or http://localhost/Eventora if using XAMPP
+APP_TIMEZONE=Asia/Colombo
+APP_CURRENCY=LKR
+
+# Mail Configuration (optional - defaults to simulation mode)
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=YOUR_GMAIL_APP_PASSWORD_HERE
+MAIL_SIMULATE=true
+
+# PayHere Payment Gateway (optional)
+PAYHERE_MERCHANT_ID=1234567
+PAYHERE_SECRET=YOUR_PAYHERE_SANDBOX_SECRET
+```
+
+> [!IMPORTANT]
+> The `.env` file is gitignored and will NOT be committed to version control. This keeps your credentials secure.
 
 ---
 
@@ -257,26 +286,26 @@ Ideal for standard XAMPP deployment:
 ---
 
 ### Step 5: Configure PayHere Sandbox (Optional)
-Open `config/payhere.php` to customize PayHere sandbox credentials if testing live mock transactions:
+If you want to test live mock transactions, update the PayHere credentials in your `.env` file:
 
-```php
-define('PAYHERE_MERCHANT_ID', '1234567');            // Your PayHere Sandbox Merchant ID
-define('PAYHERE_SECRET', 'YOUR_SANDBOX_SECRET');     // Your PayHere Sandbox Secret
-define('PAYHERE_SANDBOX', true);                     // Set to false for production
+```env
+PAYHERE_MERCHANT_ID=1234567
+PAYHERE_SECRET=YOUR_PAYHERE_SANDBOX_SECRET
 ```
 
 ---
 
 ### Step 6: Configure Mailer (PHPMailer + Gmail SMTP)
-Open `config/mail.php` to configure SMTP credentials:
+For live email sending, update the SMTP credentials in your `.env` file:
 
-```php
-define('MAIL_HOST', 'smtp.gmail.com');
-define('MAIL_PORT', 587);
-define('MAIL_USERNAME', 'your-club-email@gmail.com');
-define('MAIL_PASSWORD', 'your-gmail-app-password');  // 16-character Google App Password
-define('MAIL_SIMULATE', true);                       // Set to true to simulate without sending live SMTP
+```env
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your-club-email@gmail.com
+MAIL_PASSWORD=your-gmail-app-password  # 16-character Google App Password
+MAIL_SIMULATE=false  # Set to false to send live emails
 ```
+
 > [!NOTE]
 > By default, `MAIL_SIMULATE` is set to `true`, which safely logs all outgoing emails (confirmations, offers, reminders) into the `email_logs` table without requiring third-party SMTP server access.
 
@@ -398,7 +427,7 @@ Eventora was engineered to satisfy all Non-Functional Security Requirements:
 
 | ID | Security Control | Implementation Location | Compliance Mechanism |
 |---|---|---|---|
-| **NFR-SEC-001** | Credential Protection | `config/`, `setup/seed.sql` | Passwords hashed using `PASSWORD_DEFAULT` (bcrypt); payment secrets segregated from web root. |
+| **NFR-SEC-001** | Credential Protection | `.env`, `config/`, `setup/seed.sql` | Passwords hashed using `PASSWORD_DEFAULT` (bcrypt); payment secrets and database credentials stored in `.env` file (gitignored). |
 | **NFR-SEC-002** | SQL Injection Defense | `includes/*.php`, `api/*.php` | 100% of user inputs passed through PDO prepared statements with parameter binding. |
 | **NFR-SEC-003** | Cross-Site Scripting (XSS) | `includes/helpers.php` | Context-aware HTML escaping via `e()` helper function on all rendered parameters. |
 | **NFR-SEC-004** | Server-Side RBAC | `includes/auth.php` | `require_login()`, `require_role()`, and `can_manage_event()` enforced authoritatively on server. |
@@ -418,12 +447,18 @@ Eventora/
 ├── index.php                          # Public landing page with AngularJS event exploration
 ├── Eventora_SRS.md                    # Official Software Requirements Specification
 ├── README.md                          # Comprehensive setup & operational guide (NFR-MNT-004)
+├── .env.example                       # Environment variable template (safe to commit)
+├── .env                               # Your actual environment variables (gitignored - DO NOT commit)
 │
 ├── config/                            # Core Configuration Files
 │   ├── app.php                        # Application constants, timezone (Asia/Colombo), currency (LKR)
-│   ├── database.php                   # PDO MySQL database connection credentials
-│   ├── mail.php                       # PHPMailer SMTP & simulation settings
-│   └── payhere.php                    # PayHere Sandbox merchant ID & secret
+│   ├── env.php                        # Environment variable loader (reads from .env)
+│   ├── database.php                   # PDO MySQL database connection (reads from .env, gitignored)
+│   ├── database.php.example           # Database config template (safe to commit)
+│   ├── mail.php                       # PHPMailer SMTP & simulation settings (reads from .env, gitignored)
+│   ├── mail.php.example               # Mail config template (safe to commit)
+│   ├── payhere.php                    # PayHere Sandbox merchant ID & secret (reads from .env, gitignored)
+│   └── payhere.php.example            # PayHere config template (safe to commit)
 │
 ├── setup/                             # Database Setup Scripts
 │   ├── schema.sql                     # Full relational DDL (13 tables, keys, indexes)

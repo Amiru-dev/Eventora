@@ -2,6 +2,7 @@
 config/payhere.php
 config/mail.php
 config/database.php
+.env
 
 # === IDE & Editor ===
 .vscode/

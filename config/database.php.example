@@ -7,15 +7,18 @@
  *
  * INSTRUCTIONS:
  * 1. Copy this file to database.php
- * 2. Replace the placeholder values with your actual database credentials
+ * 2. Set up your .env file with your actual database credentials
  * 3. DO NOT commit the real database.php file to version control
  */
 
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'eventora');
-define('DB_USER', 'root');
-define('DB_PASS', 'YOUR_MYSQL_PASSWORD_HERE');
-define('DB_CHARSET', 'utf8mb4');
+// Load environment variables
+require_once __DIR__ . '/env.php';
+
+define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+define('DB_NAME', getenv('DB_NAME') ?: 'eventora');
+define('DB_USER', getenv('DB_USER') ?: 'root');
+define('DB_PASS', getenv('DB_PASS') ?: '');
+define('DB_CHARSET', getenv('DB_CHARSET') ?: 'utf8mb4');
 
 /**
  * Get PDO database connection (singleton pattern)

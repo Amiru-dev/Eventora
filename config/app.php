@@ -1,19 +1,23 @@
 <?php
 /**
  * Application Configuration
- * 
+ *
  * Global constants and settings for Eventora.
  */
+
+// Load environment variables
+require_once __DIR__ . '/env.php';
 
 // --- Application ---
 define('APP_NAME', 'Eventora');
 define('APP_VERSION', '1.0');
-define('APP_URL', 'http://localhost/Eventora');
+define('APP_URL', getenv('APP_URL') ?: 'http://localhost/Eventora');
 
 // --- Timezone & Locale ---
-date_default_timezone_set('Asia/Colombo');
-define('APP_TIMEZONE', 'Asia/Colombo');
-define('APP_CURRENCY', 'LKR');
+$timezone = getenv('APP_TIMEZONE') ?: 'Asia/Colombo';
+date_default_timezone_set($timezone);
+define('APP_TIMEZONE', $timezone);
+define('APP_CURRENCY', getenv('APP_CURRENCY') ?: 'LKR');
 define('APP_CURRENCY_DECIMALS', 2);
 
 // --- Session ---
