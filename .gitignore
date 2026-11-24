@@ -1,6 +1,7 @@
 # === Credentials & Secrets ===
 config/payhere.php
 config/mail.php
+config/database.php
 
 # === IDE & Editor ===
 .vscode/
