@@ -30,7 +30,15 @@ Options -Indexes
 
     # Block direct access to templates
     RewriteRule ^templates/ - [F,L]
+
+    # Serve custom 404 page for any missing file or directory (works in root or subfolder)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ 404.php [L]
 </IfModule>
+
+# --- Custom Error Pages ---
+ErrorDocument 404 /Eventora/404.php
 
 # --- Security Headers ---
 <IfModule mod_headers.c>
