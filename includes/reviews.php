@@ -209,12 +209,10 @@ function get_event_reviews(int $eventId, bool $visibleOnly = true): array
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':eid' => $eventId]);
-        $reviews = $stmt->fetchAll();
-
-        return $reviews ?: get_mock_event_reviews($eventId);
+        return $stmt->fetchAll();
     } catch (\PDOException $e) {
         error_log('get_event_reviews error: ' . $e->getMessage());
-        return get_mock_event_reviews($eventId);
+        return [];
     }
 }
 
