@@ -13,6 +13,7 @@ require_once __DIR__ . '/config/app.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 - Page Not Found | Eventora</title>
+    <link rel="icon" type="image/png" href="<?php echo APP_URL; ?>/assets/img/logo.png">
     <link href="<?php echo APP_URL; ?>/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?php echo APP_URL; ?>/assets/vendor/bootstrap/css/bootstrap-icons.min.css" rel="stylesheet">
     <link href="<?php echo APP_URL; ?>/assets/css/style.css" rel="stylesheet">
@@ -227,6 +228,9 @@ require_once __DIR__ . '/config/app.php';
     </div>
 
     <div class="error-container">
+        <div class="mb-2">
+            <img src="<?php echo APP_URL; ?>/assets/img/logo.png" alt="Eventora Logo" width="64" height="64" class="object-fit-contain bg-white rounded-circle p-2 shadow">
+        </div>
         <h1 class="error-code">
             <span>4</span><span>0</span><span>4</span>
         </h1>

@@ -13,7 +13,7 @@ $baseUrl = defined('APP_URL') ? APP_URL : '';
             <div class="row g-4 justify-content-between align-items-center">
                 <div class="col-md-6 text-center text-md-start">
                     <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-2">
-                        <i class="bi bi-calendar-event-fill text-primary fs-4" aria-hidden="true"></i>
+                        <img src="<?php echo $baseUrl; ?>/assets/img/logo.png" alt="Eventora Logo" width="28" height="28" class="object-fit-contain">
                         <span class="fw-bold fs-5 text-dark">Eventora</span>
                         <span class="badge bg-light text-muted border">v1.0</span>
                     </div>

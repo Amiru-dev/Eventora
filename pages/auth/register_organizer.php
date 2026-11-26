@@ -80,7 +80,7 @@ include __DIR__ . '/../../templates/header.php';
         <div class="col-md-9 col-lg-7">
             <div class="card border-0 shadow-lg" style="border-radius: 1rem; overflow: hidden;">
                 <div class="p-4 bg-dark text-white text-center">
-                    <i class="bi bi-briefcase display-5 mb-2 text-warning d-inline-block" aria-hidden="true"></i>
+                    <img src="<?php echo APP_URL; ?>/assets/img/logo.png" alt="Eventora Logo" width="56" height="56" class="object-fit-contain bg-white rounded-circle p-2 mb-2 shadow-sm">
                     <h1 class="h3 fw-bold mb-1 text-white">Register as Event Organizer</h1>
                     <p class="text-white-50 small mb-0">Submit your organization profile for administrative review</p>
                 </div>

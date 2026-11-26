@@ -63,7 +63,7 @@ include __DIR__ . '/../../templates/header.php';
             <!-- Login Card -->
             <div class="card border-0 shadow-lg" style="border-radius: 1rem; overflow: hidden;">
                 <div class="p-4 bg-primary text-white text-center">
-                    <i class="bi bi-person-lock display-5 mb-2 d-inline-block" aria-hidden="true"></i>
+                    <img src="<?php echo APP_URL; ?>/assets/img/logo.png" alt="Eventora Logo" width="56" height="56" class="object-fit-contain bg-white rounded-circle p-2 mb-2 shadow-sm">
                     <h1 class="h3 fw-bold mb-1 text-white">Welcome Back</h1>
                     <p class="text-white-50 small mb-0">Sign in to manage your bookings and campus events</p>
                 </div>

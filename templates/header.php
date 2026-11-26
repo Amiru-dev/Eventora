@@ -22,6 +22,7 @@ $baseUrl = defined('APP_URL') ? APP_URL : '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Eventora - Campus Event Booking System for university clubs, seminars, workshops and student reservations.">
     <title><?php echo htmlspecialchars($pageTitle); ?></title>
+    <link rel="icon" type="image/png" href="<?php echo $baseUrl; ?>/assets/img/logo.png">
 
     <!-- Bootstrap 5 CSS -->
     <link rel="stylesheet" href="<?php echo $baseUrl; ?>/assets/vendor/bootstrap/css/bootstrap.min.css">
@@ -41,8 +42,8 @@ $baseUrl = defined('APP_URL') ? APP_URL : '';
     <!-- Top Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-eventora sticky-top" aria-label="Main Navigation">
         <div class="container">
-            <a class="navbar-brand" href="<?php echo $baseUrl; ?>/index.php">
-                <i class="bi bi-calendar-event-fill" aria-hidden="true"></i>
+            <a class="navbar-brand d-flex align-items-center gap-2" href="<?php echo $baseUrl; ?>/index.php">
+                <img src="<?php echo $baseUrl; ?>/assets/img/logo.png" alt="Eventora Logo" width="32" height="32" class="d-inline-block object-fit-contain">
                 <span>Eventora</span>
             </a>
 
