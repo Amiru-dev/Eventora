@@ -158,6 +158,7 @@ a:hover {
 
 /* Event Cards */
 .event-card {
+    position: relative;
     background: #ffffff;
     border: 1px solid var(--eventora-border);
     border-radius: var(--eventora-radius);
