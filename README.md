@@ -1,4 +1,4 @@
-# Eventora — Campus Event Booking System
+# Eventora - Campus Event Booking System
 
 [![Version](https://img.shields.io/badge/version-1.0-blue.svg)](Eventora_SRS.md)
 [![PHP](https://img.shields.io/badge/PHP-8.2-777BB4.svg?logo=php&logoColor=white)](https://www.php.net/)
