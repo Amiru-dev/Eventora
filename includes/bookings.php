@@ -547,6 +547,8 @@ function cancel_booking(int $bookingId, int $userId): array
 
         $pdo->commit();
 
+        notify_waitlist_for_released_seats((int)$booking['event_id'], (int)$booking['seats']);
+
         log_audit_action($userId, 'booking.cancelled', 'booking', $bookingId, [
             'booking_ref' => $booking['booking_ref'],
             'seats'       => (int)$booking['seats']
@@ -604,6 +606,7 @@ function expire_abandoned_seat_holds(): int
             $pUpd->execute([':bid' => $item['booking_id']]);
 
             $pdo->commit();
+            notify_waitlist_for_released_seats((int)$item['event_id'], (int)$item['seats']);
             $releasedCount++;
         }
 
@@ -620,4 +623,20 @@ function expire_abandoned_seat_holds(): int
     }
 
     return $releasedCount;
+}
+
+/**
+ * Offer newly released seats to waiting students in FIFO order.
+ */
+function notify_waitlist_for_released_seats(int $eventId, int $seats): void
+{
+    if ($eventId <= 0 || $seats <= 0) {
+        return;
+    }
+    if (file_exists(__DIR__ . '/waitlist.php')) {
+        require_once __DIR__ . '/waitlist.php';
+        if (function_exists('offer_seats_to_waitlist')) {
+            offer_seats_to_waitlist($eventId, $seats);
+        }
+    }
 }

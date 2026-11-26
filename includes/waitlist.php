@@ -93,6 +93,19 @@ function join_waitlist(int $userId, int $eventId, int $seatsRequested = 1): arra
 }
 
 /**
+ * Clear older terminal waitlist rows for the same user/event/status so legacy
+ * databases with uk_waitlist_user_event never hit duplicate-key errors.
+ */
+function clear_prior_waitlist_status(PDO $pdo, int $userId, int $eventId, string $status): void
+{
+    $stmt = $pdo->prepare("
+        DELETE FROM waitlist
+        WHERE user_id = :uid AND event_id = :eid AND status = :status
+    ");
+    $stmt->execute([':uid' => $userId, ':eid' => $eventId, ':status' => $status]);
+}
+
+/**
  * Leave (withdraw from) the waitlist (FR-WAIT-003)
  *
  * @param int $userId
@@ -107,6 +120,8 @@ function leave_waitlist(int $userId, int $eventId): array
     }
 
     try {
+        clear_prior_waitlist_status($pdo, $userId, $eventId, 'left');
+
         $stmt = $pdo->prepare("
             UPDATE waitlist SET status = 'left'
             WHERE user_id = :uid AND event_id = :eid AND status IN ('waiting', 'offered')
@@ -162,11 +177,13 @@ function accept_waitlist_offer(int $userId, int $entryId): array
         }
         if (!empty($entry['offer_expires_at']) && strtotime($entry['offer_expires_at']) < time()) {
             // Auto-expire
+            clear_prior_waitlist_status($pdo, $userId, (int)$entry['event_id'], 'expired');
             $pdo->prepare("UPDATE waitlist SET status = 'expired' WHERE entry_id = :id")->execute([':id' => $entryId]);
             return ['success' => false, 'event_id' => null, 'seats' => 0, 'error' => 'Your offer has expired. Please re-join the waitlist.'];
         }
 
         // Mark accepted
+        clear_prior_waitlist_status($pdo, $userId, (int)$entry['event_id'], 'accepted');
         $stmt = $pdo->prepare("UPDATE waitlist SET status = 'accepted' WHERE entry_id = :id");
         $stmt->execute([':id' => $entryId]);
 
@@ -198,6 +215,15 @@ function decline_waitlist_offer(int $userId, int $entryId): array
     }
 
     try {
+        $evStmt = $pdo->prepare("SELECT event_id FROM waitlist WHERE entry_id = :eid AND user_id = :uid AND status = 'offered' LIMIT 1");
+        $evStmt->execute([':eid' => $entryId, ':uid' => $userId]);
+        $evId = $evStmt->fetchColumn();
+        if (!$evId) {
+            return ['success' => false, 'error' => 'No active offer found to decline.'];
+        }
+
+        clear_prior_waitlist_status($pdo, $userId, (int)$evId, 'declined');
+
         $stmt = $pdo->prepare("
             UPDATE waitlist SET status = 'declined'
             WHERE entry_id = :eid AND user_id = :uid AND status = 'offered'
@@ -294,7 +320,7 @@ function expire_waitlist_offers(): array
 
         // Find expired offers grouped by event
         $expiredStmt = $pdo->prepare("
-            SELECT entry_id, event_id
+            SELECT entry_id, user_id, event_id
             FROM waitlist
             WHERE status = 'offered' AND offer_expires_at <= NOW()
         ");
@@ -304,6 +330,10 @@ function expire_waitlist_offers(): array
         if (empty($expiredEntries)) {
             $pdo->commit();
             return ['expired' => 0, 'promoted' => 0];
+        }
+
+        foreach ($expiredEntries as $exp) {
+            clear_prior_waitlist_status($pdo, (int)$exp['user_id'], (int)$exp['event_id'], 'expired');
         }
 
         // Mark each expired

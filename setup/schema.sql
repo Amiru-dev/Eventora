@@ -238,7 +238,7 @@ CREATE TABLE IF NOT EXISTS `waitlist` (
 
     FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE,
     FOREIGN KEY (`event_id`) REFERENCES `events`(`event_id`) ON DELETE CASCADE,
-    UNIQUE KEY `uk_waitlist_user_event` (`user_id`, `event_id`, `status`),
+    INDEX `idx_waitlist_user_event` (`user_id`, `event_id`, `status`),
     INDEX `idx_waitlist_event` (`event_id`, `status`, `position`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

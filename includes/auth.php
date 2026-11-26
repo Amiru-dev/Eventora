@@ -348,6 +348,7 @@ function login_user(string $email, string $password): array
         // Store authoritative session payload
         $_SESSION['user'] = [
             'id'           => (int)$user['user_id'],
+            'user_id'      => (int)$user['user_id'],
             'name'         => $user['name'],
             'email'        => $user['email'],
             'role'         => $user['role'],
@@ -401,7 +402,18 @@ function logout_user(): void
 function current_user(): ?array
 {
     start_session_safe();
-    return $_SESSION['user'] ?? null;
+    if (empty($_SESSION['user'])) {
+        return null;
+    }
+
+    // Normalize both 'id' and 'user_id' keys across existing/new sessions
+    if (!isset($_SESSION['user']['user_id']) && isset($_SESSION['user']['id'])) {
+        $_SESSION['user']['user_id'] = $_SESSION['user']['id'];
+    } elseif (!isset($_SESSION['user']['id']) && isset($_SESSION['user']['user_id'])) {
+        $_SESSION['user']['id'] = $_SESSION['user']['user_id'];
+    }
+
+    return $_SESSION['user'];
 }
 
 /**

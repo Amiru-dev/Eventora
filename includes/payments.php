@@ -150,7 +150,7 @@ function process_payhere_notification(array $postData): array
 
         // 2. Lookup existing payment record
         $stmt = $pdo->prepare("
-            SELECT p.*, b.booking_id, b.user_id, b.event_id, b.seats, b.status as booking_status, b.total as booking_total
+            SELECT p.*, b.booking_id, b.booking_ref, b.user_id, b.event_id, b.seats, b.status as booking_status, b.total as booking_total
             FROM payments p
             JOIN bookings b ON p.booking_id = b.booking_id
             WHERE p.order_ref = :oref
@@ -168,9 +168,11 @@ function process_payhere_notification(array $postData): array
             return ['success' => true, 'message' => 'Duplicate notification ignored (idempotent confirmation).', 'http_code' => 200];
         }
 
-        $bookingId = (int)$payment['booking_id'];
-        $eventId   = (int)$payment['event_id'];
-        $seats     = (int)$payment['seats'];
+        $bookingId  = (int)$payment['booking_id'];
+        $bookingRef = $payment['booking_ref'] ?? null;
+        $userId     = (int)$payment['user_id'];
+        $eventId    = (int)$payment['event_id'];
+        $seats      = (int)$payment['seats'];
 
         $pdo->beginTransaction();
 
@@ -224,9 +226,9 @@ function process_payhere_notification(array $postData): array
 
             log_audit_action($userId, 'payment.verified', 'payment', (int)$payment['payment_id'], [
                 'order_ref'     => $orderRef,
-                'amount'        => $payhereAmount,
+                'amount'        => $paidAmount,
                 'status'        => 'success',
-                'booking_ref'   => $booking['booking_ref'] ?? null,
+                'booking_ref'   => $bookingRef,
                 'md5_verified'  => true
             ]);
 
@@ -284,6 +286,14 @@ function process_payhere_notification(array $postData): array
             $updBkg->execute([':bid' => $bookingId]);
 
             $pdo->commit();
+
+            // Offer released seats to FIFO waitlist if enabled
+            if (file_exists(__DIR__ . '/bookings.php')) {
+                require_once __DIR__ . '/bookings.php';
+                if (function_exists('notify_waitlist_for_released_seats')) {
+                    notify_waitlist_for_released_seats($eventId, $seats);
+                }
+            }
 
             log_audit_action($userId, 'payment.failed', 'payment', (int)($payment['payment_id'] ?? 0), [
                 'order_ref'     => $orderRef,
