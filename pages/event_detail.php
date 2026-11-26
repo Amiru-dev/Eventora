@@ -219,14 +219,6 @@ include __DIR__ . '/../templates/header.php';
                     <p class="lead fs-6 text-secondary" style="line-height: 1.7;">
                         <?php echo nl2br(htmlspecialchars($event['description'])); ?>
                     </p>
-
-                    <h3 class="h6 fw-bold mt-4 mb-2">What will be covered:</h3>
-                    <ul class="text-secondary small">
-                        <li>Semantic HTML5 page structure and accessible navigation</li>
-                        <li>Responsive layouts with Bootstrap 5 grid and utility classes</li>
-                        <li>Introduction to DOM manipulation and form validation with JavaScript</li>
-                        <li>Q&A session with senior computing instructors</li>
-                    </ul>
                 </div>
             </article>
 
